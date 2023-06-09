@@ -1,0 +1,9 @@
+package com.banking.accountmanagementapps.model;
+
+import lombok.Getter;
+
+@Getter
+public enum TransactionType {
+    DEPOSIT,
+    WITHDRAWAL
+}
