@@ -1,9 +1,8 @@
 package com.banking.accountmanagementapps.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -12,8 +11,11 @@ import java.util.List;
 @Table
 @Getter
 @Setter
+@NoArgsConstructor
 
 public class CustomerEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
@@ -21,7 +23,7 @@ public class CustomerEntity {
     private String address;
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customerEntity")
     private List<AccountEntity> account;
 
 }

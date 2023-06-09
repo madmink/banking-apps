@@ -1,5 +1,6 @@
 package com.banking.accountmanagementapps.dto;
 
+import com.banking.accountmanagementapps.entity.TransactionEntity;
 import com.banking.accountmanagementapps.model.TransactionType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,16 @@ public class TransactionDTO {
     private LocalDate date;
     private Double amount;
     private TransactionType transactionType;
+
+    public TransactionEntity transactionEntity(){
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity().setId(this.id);
+        transactionEntity().setDate(this.date);
+        transactionEntity().setAmount(this.amount);
+        transactionEntity().setTransactionType(this.transactionType);
+        return transactionEntity;
+    }
+
+
+
 }
