@@ -1,6 +1,7 @@
 package com.banking.accountmanagementapps.dto;
 
 import com.banking.accountmanagementapps.entity.CustomerEntity;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ public class CustomerDTO {
     private Long id;
     private String firstName;
     private String lastName;
+    @Email(message = "Email should be in valid format")
     private String email;
     private String address;
     private String phoneNumber;
@@ -22,7 +24,7 @@ public class CustomerDTO {
         customerEntity.setFirstName(this.firstName);
         customerEntity.setLastName(this.lastName);
         customerEntity.setEmail(this.email);
-        customerEntity.setAddress(this.email);
+        customerEntity.setAddress(this.address);
         customerEntity.setPhoneNumber(this.phoneNumber);
         return customerEntity;
     }

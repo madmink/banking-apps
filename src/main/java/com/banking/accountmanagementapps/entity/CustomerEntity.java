@@ -23,7 +23,7 @@ public class CustomerEntity {
     private String address;
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customerEntity")
-    private List<AccountEntity> account;
+    @OneToMany(mappedBy = "customer")
+    private List<AccountEntity> accounts;
 
 }

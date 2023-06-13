@@ -2,28 +2,33 @@ package com.banking.accountmanagementapps.controller;
 
 import com.banking.accountmanagementapps.dto.CustomerDTO;
 import com.banking.accountmanagementapps.service.CustomerService;
+import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/customer")
 public class CustomerController {
-
-    private final CustomerService customerService;
-
     @Autowired
-    public CustomerController(CustomerService customerService){
-        this.customerService = customerService;
-    }
+    public CustomerService customerService;
 
     @PostMapping("/create")
-    public ResponseEntity<CustomerDTO> saveCustomer(@RequestBody CustomerDTO customerDTO){
-        CustomerDTO savedCustomerDTO = customerService.saveCustomer(customerDTO);
+    public ResponseEntity<CustomerDTO> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO){
+        CustomerDTO savedCustomerDTO = customerService.createCustomer(customerDTO);
         return new ResponseEntity<>(savedCustomerDTO, HttpStatus.CREATED);
     }
+
+    @GetMapping("/getUser/{customerId}")
+    public ResponseEntity<List<CustomerDTO>> getCustomerById(@PathVariable("customerId") Long customerId){
+        List<CustomerDTO> customerDTOList = (List<CustomerDTO>) customerService.getCustomerById(customerId);
+        ResponseEntity<List<CustomerDTO>> responseEntity = new ResponseEntity<>(customerDTOList, HttpStatus.OK);
+        return responseEntity;
+
+    };
+
 }

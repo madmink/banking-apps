@@ -23,10 +23,10 @@ public class AccountEntity {
     private AccountType accountType;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private CustomerEntity customerEntity;
+    @JoinColumn(name = "customerId")
+    private CustomerEntity customer;
 
-    @OneToMany
+    @OneToMany(mappedBy = "account")
     private List<TransactionEntity> transactions;
 
 }
