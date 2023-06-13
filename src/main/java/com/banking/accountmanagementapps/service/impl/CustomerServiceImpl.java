@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -26,7 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public CustomerDTO getCustomerById(Long customerId) {
+    public List<CustomerDTO> getCustomerById(Long customerId) {
         List<CustomerEntity> listOfCustomer = customerRepository.findAllById(customerId);
         List<CustomerDTO> customerList = new ArrayList<>();
 
@@ -34,17 +35,24 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerDTO dto = CustomerDTO.fromEntity(ce);
             customerList.add(dto);
         }
-        return (CustomerDTO) customerList;
+        return customerList;
     }
-
-    @Override
-    public List<CustomerDTO> getAllAccountForCustomer(Long customerId) {
-        return null;
-    }
-
     @Override
     public CustomerDTO updateCustomer(CustomerDTO customerDTO, Long customerId) {
-        return null;
+        Optional<CustomerEntity>  optionalCustomerEntity = customerRepository.findById(customerId);
+        CustomerDTO dto = null;
+        if(optionalCustomerEntity.isPresent()){
+            CustomerEntity pe = optionalCustomerEntity.get();
+            pe.setId(customerDTO.getId());
+            pe.setFirstName(customerDTO.getFirstName());
+            pe.setLastName(customerDTO.getLastName());
+            pe.setEmail(customerDTO.getEmail());
+            pe.setAddress(customerDTO.getAddress());
+            pe.setPhoneNumber(customerDTO.getPhoneNumber());
+            dto= CustomerDTO.fromEntity(pe);
+            customerRepository.save(pe);
+        }
+        return dto;
     }
 
     @Override

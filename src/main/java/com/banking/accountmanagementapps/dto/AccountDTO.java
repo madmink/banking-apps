@@ -30,7 +30,7 @@ public class AccountDTO {
         return accountEntity;
     }
 
-    public AccountDTO fromEntity(AccountEntity accountEntity){
+    public static AccountDTO fromEntity(AccountEntity accountEntity){
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(accountEntity.getId());
         accountDTO.setAccountNumber(accountEntity.getAccountNumber());

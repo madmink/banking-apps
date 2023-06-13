@@ -1,13 +1,13 @@
 package com.banking.accountmanagementapps.service.impl;
 
 import com.banking.accountmanagementapps.dto.AccountDTO;
+import com.banking.accountmanagementapps.dto.CustomerDTO;
 import com.banking.accountmanagementapps.entity.AccountEntity;
 import com.banking.accountmanagementapps.entity.CustomerEntity;
 import com.banking.accountmanagementapps.exception.BusinessException;
 import com.banking.accountmanagementapps.exception.ErrorModel;
 import com.banking.accountmanagementapps.repository.AccountRepository;
 import com.banking.accountmanagementapps.repository.CustomerRepository;
-import com.banking.accountmanagementapps.repository.TransactionRepository;
 import com.banking.accountmanagementapps.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,13 +43,32 @@ private AccountRepository accountRepository;
     }
 
     @Override
-    public AccountDTO getAccountById(AccountDTO accountDTO) {
-        return null;
+    public List<AccountDTO> getAccountByAccountNumber(String accountNumber) {
+        List<AccountEntity> listOfAccount = accountRepository.findAllByAccountNumber(accountNumber);
+        List<AccountDTO> accountList = new ArrayList<>();
+
+        for(AccountEntity ce: listOfAccount){
+            AccountDTO dto = AccountDTO.fromEntity(ce);
+            accountList.add(dto);
+        }
+        return accountList;
     }
 
     @Override
-    public AccountDTO updateAccount(AccountDTO accountDTO) {
-        return null;
+    public AccountDTO updateAccount(AccountDTO accountDTO, String accountNumber) {
+        Optional<AccountEntity> optionalAccountEntity = accountRepository.findByAccountNumber(accountNumber);
+        AccountDTO dto = null;
+        if(optionalAccountEntity.isPresent()){
+            AccountEntity pe = optionalAccountEntity.get();
+            pe.setId(accountDTO.getId());
+            pe.setAccountNumber(accountDTO.getAccountNumber());
+            pe.setAccountType(accountDTO.getAccountType());
+            pe.setBalance(accountDTO.getBalance());
+            dto = AccountDTO.fromEntity(pe);
+            accountRepository.save(pe);
+        }
+
+        return dto;
     }
 
     @Override
@@ -59,6 +78,13 @@ private AccountRepository accountRepository;
 
     @Override
     public List<AccountDTO> getAccountByCustomerId(Long customerId) {
-        return null;
+        List<AccountEntity> listOfAccount = accountRepository.findAllByCustomerId(customerId);
+        List<AccountDTO> accountList = new ArrayList<>();
+
+        for(AccountEntity ce: listOfAccount){
+            AccountDTO dto = AccountDTO.fromEntity(ce);
+            accountList.add(dto);
+        }
+        return accountList;
     }
 }
