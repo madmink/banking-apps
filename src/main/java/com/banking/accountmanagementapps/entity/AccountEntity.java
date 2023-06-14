@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "ACCOUNT_TABLE")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,10 +19,8 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accountNumber;
-    private Double balance;
-    @Enumerated(EnumType.STRING)
-    private AccountType accountType;
-
+    private BigDecimal balance;
+    private String accountType;
     @ManyToOne
     @JoinColumn(name = "customerId")
     private CustomerEntity customer;

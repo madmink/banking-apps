@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -14,18 +15,27 @@ import java.time.LocalDate;
 public class TransactionDTO {
     private Long id;
     private LocalDate date;
-    private Double amount;
-    private TransactionType transactionType;
+    private BigDecimal amount;
+    private String transactionType;
 
-    public TransactionEntity transactionEntity(){
+    public TransactionEntity toEntity(){
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity().setId(this.id);
-        transactionEntity().setDate(this.date);
-        transactionEntity().setAmount(this.amount);
-        transactionEntity().setTransactionType(this.transactionType);
+        transactionEntity.setId(this.id);
+        transactionEntity.setDate(this.date);
+        transactionEntity.setAmount(this.amount);
+        transactionEntity.setTransactionType(this.transactionType);
         return transactionEntity;
     }
 
+    public static TransactionDTO fromEntity(TransactionEntity transactionEntity){
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setId(transactionEntity.getId());
+        transactionDTO.setDate(transactionEntity.getDate());
+        transactionDTO.setAmount(transactionEntity.getAmount());
+        transactionDTO.setTransactionType(transactionEntity.getTransactionType());
+        return transactionDTO;
+
+    }
 
 
 }

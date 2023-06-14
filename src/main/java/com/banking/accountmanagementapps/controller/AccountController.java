@@ -25,17 +25,17 @@ public class AccountController {
         return new ResponseEntity<>(createdCustomerDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("getUser/{accountNumber}")
+    @GetMapping("getAccountByCustomerId/{customerId}")
     public ResponseEntity<List<AccountDTO>> getAccountByAccountNumber(@PathVariable("customerId") Long customerId){
         List<AccountDTO> accountDTOList = accountService.getAccountByCustomerId(customerId);
         ResponseEntity<List<AccountDTO>> responseEntity = new ResponseEntity<>(accountDTOList,HttpStatus.OK);
         return responseEntity;
     }
 
-    @PutMapping("update")
-    public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO accountDTO, String accountNumber){
+    @PutMapping("update/{accountNumber}")
+    public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable String accountNumber){
         AccountDTO updateAccountDTO = accountService.updateAccount(accountDTO,accountNumber);
-        ResponseEntity<AccountDTO> responseEntity = new ResponseEntity<>(accountDTO, HttpStatus.OK);
+        ResponseEntity<AccountDTO> responseEntity = new ResponseEntity<>(updateAccountDTO, HttpStatus.OK);
         return responseEntity;
 
 

@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
 @Entity
-@Table
+@Table(name = "TRANSACTION_TABLE")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,8 +20,8 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate date;
-    private Double amount;
-    private TransactionType transactionType;
+    private BigDecimal amount;
+    private String transactionType;
 
     @ManyToOne
     @JoinColumn(name = "account_id" ,nullable = false)

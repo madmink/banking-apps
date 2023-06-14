@@ -3,9 +3,12 @@ package com.banking.accountmanagementapps.dto;
 import com.banking.accountmanagementapps.entity.AccountEntity;
 import com.banking.accountmanagementapps.entity.CustomerEntity;
 import com.banking.accountmanagementapps.model.AccountType;
+import com.banking.accountmanagementapps.model.TransactionType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,8 +16,8 @@ import lombok.Setter;
 public class AccountDTO {
     private Long id;
     private String accountNumber;
-    private AccountType accountType;
-    private Double balance;
+    private String accountType;
+    private BigDecimal balance;
     private Long customerId;
 
     public AccountEntity toEntity(CustomerEntity customerEntity){

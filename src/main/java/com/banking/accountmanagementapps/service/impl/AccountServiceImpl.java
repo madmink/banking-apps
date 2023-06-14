@@ -1,7 +1,6 @@
 package com.banking.accountmanagementapps.service.impl;
 
 import com.banking.accountmanagementapps.dto.AccountDTO;
-import com.banking.accountmanagementapps.dto.CustomerDTO;
 import com.banking.accountmanagementapps.entity.AccountEntity;
 import com.banking.accountmanagementapps.entity.CustomerEntity;
 import com.banking.accountmanagementapps.exception.BusinessException;
@@ -43,24 +42,11 @@ private AccountRepository accountRepository;
     }
 
     @Override
-    public List<AccountDTO> getAccountByAccountNumber(String accountNumber) {
-        List<AccountEntity> listOfAccount = accountRepository.findAllByAccountNumber(accountNumber);
-        List<AccountDTO> accountList = new ArrayList<>();
-
-        for(AccountEntity ce: listOfAccount){
-            AccountDTO dto = AccountDTO.fromEntity(ce);
-            accountList.add(dto);
-        }
-        return accountList;
-    }
-
-    @Override
     public AccountDTO updateAccount(AccountDTO accountDTO, String accountNumber) {
         Optional<AccountEntity> optionalAccountEntity = accountRepository.findByAccountNumber(accountNumber);
         AccountDTO dto = null;
         if(optionalAccountEntity.isPresent()){
             AccountEntity pe = optionalAccountEntity.get();
-            pe.setId(accountDTO.getId());
             pe.setAccountNumber(accountDTO.getAccountNumber());
             pe.setAccountType(accountDTO.getAccountType());
             pe.setBalance(accountDTO.getBalance());
