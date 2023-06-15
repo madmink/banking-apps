@@ -26,7 +26,12 @@ public class TransactionController {
     public ResponseEntity<TransactionDTO> withdrawn(@PathVariable String accountNumber, @RequestParam BigDecimal amount){
         TransactionDTO withdrawnTransaction = transactionService.withdrawn(accountNumber,amount);
         return new ResponseEntity<>(withdrawnTransaction, HttpStatus.CREATED);
+    }
 
+    @PostMapping("transfer/{fromAccountNumber}/{toAccountNumber}")
+    public ResponseEntity<TransactionDTO> transfer(@PathVariable String fromAccountNumber, @PathVariable String toAccountNumber, @RequestParam BigDecimal amount){
+        TransactionDTO transferTransaction = transactionService.transfer(fromAccountNumber, toAccountNumber, amount);
+        return new ResponseEntity<>(transferTransaction, HttpStatus.CREATED);
     }
 
 

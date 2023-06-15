@@ -27,18 +27,18 @@ private AccountRepository accountRepository;
     @Override
     public AccountDTO createAccount(AccountDTO accountDTO) {
         Optional<CustomerEntity> customerEntityOptional = customerRepository.findById(accountDTO.getCustomerId());
-        if(customerEntityOptional.isPresent()){
-            AccountEntity accountEntity = accountDTO.toEntity(customerEntityOptional.get());
-            accountRepository.save(accountEntity);
-            return accountDTO.fromEntity(accountEntity);
+        if(!customerEntityOptional.isPresent()){
+            ErrorModel errorModel = new ErrorModel();
+            errorModel.setCode("CUSTOMER_ID_DOES_NOT_EXIST");
+            errorModel.setMessage("Customer ID Doesn't Exist, Please Create New Customer Id");
+            List<ErrorModel> errors = new ArrayList<>();
+            errors.add(errorModel);
+            throw new BusinessException(errors);
         }
-        ErrorModel errorModel = new ErrorModel();
-        errorModel.setCode("CUSTOMER_ID_DOES_NOT_EXIST");
-        errorModel.setMessage("Customer ID Doesn't Exist, Please Create New Customer Id");
-        List<ErrorModel> errors = new ArrayList<>();
-        errors.add(errorModel);
-        throw new BusinessException(errors);
 
+        AccountEntity accountEntity = accountDTO.toEntity(customerEntityOptional.get());
+        accountRepository.save(accountEntity);
+        return accountDTO.fromEntity(accountEntity);
     }
 
     @Override

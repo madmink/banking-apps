@@ -75,7 +75,30 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public TransactionDTO transfer(String fromAccountNumber, String toAccountNumber, Double amount) {
-        return null;
+    public TransactionDTO transfer(String fromAccountNumber, String toAccountNumber, BigDecimal amount) {
+        Optional<AccountEntity> optionalFromAccountNumber = accountRepository.findByAccountNumber(fromAccountNumber);
+        Optional<AccountEntity> optionalToAccountNumber = accountRepository.findByAccountNumber(toAccountNumber);
+        if(!optionalToAccountNumber.isPresent() || !optionalFromAccountNumber.isPresent()){
+            // insert exception here when one of the Account Number is not avaliable
+        }
+        AccountEntity fromAccountEntity = optionalFromAccountNumber.get();
+        AccountEntity toAccountEntity = optionalToAccountNumber.get();
+
+        BigDecimal newBalance = fromAccountEntity.getBalance().subtract(amount);
+        fromAccountEntity.setBalance(newBalance);
+        accountRepository.save(fromAccountEntity);
+
+        BigDecimal newToAccountBalance = toAccountEntity.getBalance().add(amount);
+        toAccountEntity.setBalance(newToAccountBalance);
+        accountRepository.save(toAccountEntity);
+
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setAccount(fromAccountEntity);
+        transactionEntity.setAmount(amount);
+        transactionEntity.setTransactionType(TransactionType.TRANSFER.name());
+        transactionEntity.setDate(LocalDate.now());
+        transactionRepository.save(transactionEntity);
+
+        return TransactionDTO.fromEntity(transactionEntity);
     }
 }

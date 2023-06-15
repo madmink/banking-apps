@@ -8,5 +8,5 @@ public interface TransactionService {
 
     TransactionDTO deposit(String accountNumber, BigDecimal amount);
     TransactionDTO withdrawn(String accountNumber, BigDecimal amount);
-    TransactionDTO transfer (String fromAccountNumber, String toAccountNumber, Double amount);
+    TransactionDTO transfer (String fromAccountNumber, String toAccountNumber, BigDecimal amount);
 }
