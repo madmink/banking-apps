@@ -11,9 +11,8 @@ import com.banking.accountmanagementapps.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -58,8 +57,22 @@ private AccountRepository accountRepository;
     }
 
     @Override
-    public void deleteAccount(Long id) {
-
+    public void deleteAccount(String accountNumber) {
+        Optional<AccountEntity> optionalAccountEntity = accountRepository.findByAccountNumber(accountNumber);
+        if(!optionalAccountEntity.isPresent()){
+            ErrorModel errorModel = new ErrorModel();
+            errorModel.setCode("ACCOUNT_NOT_FOUND");
+            errorModel.setMessage("The Account Number Doesnt Exist");
+            throw new BusinessException(Collections.singletonList(errorModel));
+        }
+        AccountEntity accountEntity = optionalAccountEntity.get();
+        if(accountEntity.getBalance().compareTo(BigDecimal.ZERO) !=0){
+            ErrorModel errorModel = new ErrorModel();
+            errorModel.setCode("ACCOUNT_HAS_BALANCE");
+            errorModel.setMessage("The Account Has Balance, Account only can be deleted if Balance is 0");
+            throw new BusinessException(Collections.singletonList(errorModel));
+        }
+        accountRepository.delete(accountEntity);
     }
 
     @Override

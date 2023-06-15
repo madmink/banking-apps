@@ -25,7 +25,9 @@ public class AccountEntity {
     @JoinColumn(name = "customerId")
     private CustomerEntity customer;
 
-    @OneToMany(mappedBy = "account")
+
+    // Performed Cascade delete to cleanup all related in TransactionEntity for respective deleted account number
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionEntity> transactions;
 
 }

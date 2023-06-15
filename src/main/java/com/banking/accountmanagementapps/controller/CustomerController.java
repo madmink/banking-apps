@@ -1,8 +1,10 @@
 package com.banking.accountmanagementapps.controller;
 
 import com.banking.accountmanagementapps.dto.CustomerDTO;
+import com.banking.accountmanagementapps.entity.CustomerEntity;
 import com.banking.accountmanagementapps.service.CustomerService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +38,10 @@ public class CustomerController {
     return responseEntity;
     }
 
-}
+    @DeleteMapping("delete/{customerId}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable Long customerId){
+        customerService.deleteCustomer(customerId);
+        return new ResponseEntity<>("Customer Has Been Deleted Successfully", HttpStatus.OK);
+        }
+    }
+

@@ -22,6 +22,8 @@ public class CustomerEntity {
     private String email;
     private String address;
     private String phoneNumber;
+    private String identityType;
+    private String identityNumber;
 
     @OneToMany(mappedBy = "customer")
     private List<AccountEntity> accounts;
