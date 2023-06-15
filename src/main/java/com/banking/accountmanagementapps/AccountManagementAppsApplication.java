@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication //123
+@SpringBootApplication //1231
 @ComponentScan
 public class AccountManagementAppsApplication {
 
