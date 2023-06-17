@@ -8,7 +8,6 @@ import com.banking.accountmanagementapps.exception.ErrorModel;
 import com.banking.accountmanagementapps.repository.AccountRepository;
 import com.banking.accountmanagementapps.repository.CustomerRepository;
 import com.banking.accountmanagementapps.service.CustomerService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,14 @@ public class CustomerServiceImpl implements CustomerService {
     private AccountRepository accountRepository;
 
     @Override
-    public CustomerDTO createCustomer(@Valid CustomerDTO customerDTO) {
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
+        Optional<CustomerEntity> optionalCustomerEntity = customerRepository.findByIdentityNumber(customerDTO.getIdentityNumber());
+        if(optionalCustomerEntity.isPresent()){
+            ErrorModel errorModel = new ErrorModel();
+            errorModel.setCode("IDENTITY_NUMBER_ALREADY_USED");
+            errorModel.setMessage("Identity Number Already Used, contact customer service for assistance");
+            throw new BusinessException(Collections.singletonList(errorModel));
+        }
         CustomerEntity customerEntity = customerDTO.toEntity();
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
         return CustomerDTO.fromEntity(savedEntity);
@@ -49,25 +55,29 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO updateCustomer(CustomerDTO customerDTO, Long customerId) {
         Optional<CustomerEntity>  optionalCustomerEntity = customerRepository.findById(customerId);
-        CustomerDTO dto = null;
-        if(optionalCustomerEntity.isPresent()){
-            CustomerEntity pe = optionalCustomerEntity.get();
-            pe.setId(customerDTO.getId());
-            pe.setFirstName(customerDTO.getFirstName());
-            pe.setLastName(customerDTO.getLastName());
-            pe.setEmail(customerDTO.getEmail());
-            pe.setAddress(customerDTO.getAddress());
-            pe.setPhoneNumber(customerDTO.getPhoneNumber());
-            dto= CustomerDTO.fromEntity(pe);
-            customerRepository.save(pe);
+        CustomerDTO dto;
+        if(optionalCustomerEntity.isEmpty()){
+            ErrorModel errorModel = new ErrorModel();
+            errorModel.setCode("CUSTOMER_NOT_FOUND");
+            errorModel.setMessage("Customer Not Found, please check the Customer Id");
+            throw new BusinessException(Collections.singletonList(errorModel));
         }
+        CustomerEntity pe = optionalCustomerEntity.get();
+        pe.setId(customerDTO.getId());
+        pe.setFirstName(customerDTO.getFirstName());
+        pe.setLastName(customerDTO.getLastName());
+        pe.setEmail(customerDTO.getEmail());
+        pe.setAddress(customerDTO.getAddress());
+        pe.setPhoneNumber(customerDTO.getPhoneNumber());
+        dto= CustomerDTO.fromEntity(pe);
+        customerRepository.save(pe);
         return dto;
     }
 
     @Override
     public void deleteCustomer(Long customerId) {
         Optional<CustomerEntity> optionalCustomerEntity = customerRepository.findById(customerId);
-        if(!optionalCustomerEntity.isPresent()){
+        if(optionalCustomerEntity.isEmpty()){
             ErrorModel errorModel = new ErrorModel();
             errorModel.setCode("CUSTOMER_NOT_FOUND");
             errorModel.setMessage("Customer Not Found, please check the Customer Id");

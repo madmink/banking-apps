@@ -3,6 +3,7 @@ package com.banking.accountmanagementapps.dto;
 import com.banking.accountmanagementapps.entity.CustomerEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +17,7 @@ public class CustomerDTO {
     private String firstName;
     @NotEmpty(message = "Field must not be empty")
     private String lastName;
-    @Email(message = "Email should be in valid format")
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", flags = Pattern.Flag.CASE_INSENSITIVE,message = "Email should be in valid format")
     private String email;
     @NotEmpty(message = "Field must not be empty")
     private String address;

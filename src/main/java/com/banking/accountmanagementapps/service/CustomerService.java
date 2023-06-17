@@ -3,7 +3,6 @@ package com.banking.accountmanagementapps.service;
 import com.banking.accountmanagementapps.dto.CustomerDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CustomerService {
     CustomerDTO createCustomer(CustomerDTO customerDTO);

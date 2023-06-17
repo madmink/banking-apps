@@ -1,7 +1,6 @@
 package com.banking.accountmanagementapps.dto;
 
 import com.banking.accountmanagementapps.entity.TransactionEntity;
-import com.banking.accountmanagementapps.model.TransactionType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,15 +17,6 @@ public class TransactionDTO {
     private BigDecimal amount;
     private String transactionType;
 
-    public TransactionEntity toEntity(){
-        TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setId(this.id);
-        transactionEntity.setDate(this.date);
-        transactionEntity.setAmount(this.amount);
-        transactionEntity.setTransactionType(this.transactionType);
-        return transactionEntity;
-    }
-
     public static TransactionDTO fromEntity(TransactionEntity transactionEntity){
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setId(transactionEntity.getId());
@@ -34,7 +24,6 @@ public class TransactionDTO {
         transactionDTO.setAmount(transactionEntity.getAmount());
         transactionDTO.setTransactionType(transactionEntity.getTransactionType());
         return transactionDTO;
-
     }
 
 

@@ -17,16 +17,16 @@ import java.util.*;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-@Autowired
-private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
-@Autowired
-private AccountRepository accountRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public AccountDTO createAccount(AccountDTO accountDTO) {
         Optional<CustomerEntity> customerEntityOptional = customerRepository.findById(accountDTO.getCustomerId());
-        if(!customerEntityOptional.isPresent()){
+        if (customerEntityOptional.isEmpty()) {
             ErrorModel errorModel = new ErrorModel();
             errorModel.setCode("CUSTOMER_ID_DOES_NOT_EXIST");
             errorModel.setMessage("Customer ID Doesn't Exist, Please Create New Customer Id");
@@ -37,36 +37,40 @@ private AccountRepository accountRepository;
 
         AccountEntity accountEntity = accountDTO.toEntity(customerEntityOptional.get());
         accountRepository.save(accountEntity);
-        return accountDTO.fromEntity(accountEntity);
+        return AccountDTO.fromEntity(accountEntity);
     }
 
     @Override
     public AccountDTO updateAccount(AccountDTO accountDTO, String accountNumber) {
         Optional<AccountEntity> optionalAccountEntity = accountRepository.findByAccountNumber(accountNumber);
-        AccountDTO dto = null;
-        if(optionalAccountEntity.isPresent()){
-            AccountEntity pe = optionalAccountEntity.get();
-            pe.setAccountNumber(accountDTO.getAccountNumber());
-            pe.setAccountType(accountDTO.getAccountType());
-            pe.setBalance(accountDTO.getBalance());
-            dto = AccountDTO.fromEntity(pe);
-            accountRepository.save(pe);
+        if (optionalAccountEntity.isEmpty()) {
+            ErrorModel errorModel = new ErrorModel();
+            errorModel.setCode("ACCOUNT_DOES_NOT_EXIST");
+            errorModel.setMessage("Account doesn't exist in our system, please contact customer service for further assistance");
+            throw new BusinessException(Collections.singletonList(errorModel));
         }
-
+        AccountDTO dto;
+        AccountEntity pe = optionalAccountEntity.get();
+        pe.setAccountNumber(accountDTO.getAccountNumber());
+        pe.setAccountType(accountDTO.getAccountType());
+        pe.setBalance(accountDTO.getBalance());
+        dto = AccountDTO.fromEntity(pe);
+        accountRepository.save(pe);
         return dto;
+
     }
 
     @Override
     public void deleteAccount(String accountNumber) {
         Optional<AccountEntity> optionalAccountEntity = accountRepository.findByAccountNumber(accountNumber);
-        if(!optionalAccountEntity.isPresent()){
+        if (optionalAccountEntity.isEmpty()) {
             ErrorModel errorModel = new ErrorModel();
             errorModel.setCode("ACCOUNT_NOT_FOUND");
-            errorModel.setMessage("The Account Number Doesnt Exist");
+            errorModel.setMessage("The Account Number Doesn't Exist");
             throw new BusinessException(Collections.singletonList(errorModel));
         }
         AccountEntity accountEntity = optionalAccountEntity.get();
-        if(accountEntity.getBalance().compareTo(BigDecimal.ZERO) !=0){
+        if (accountEntity.getBalance().compareTo(BigDecimal.ZERO) != 0) {
             ErrorModel errorModel = new ErrorModel();
             errorModel.setCode("ACCOUNT_HAS_BALANCE");
             errorModel.setMessage("The Account Has Balance, Account only can be deleted if Balance is 0");
@@ -80,7 +84,7 @@ private AccountRepository accountRepository;
         List<AccountEntity> listOfAccount = accountRepository.findAllByCustomerId(customerId);
         List<AccountDTO> accountList = new ArrayList<>();
 
-        for(AccountEntity ce: listOfAccount){
+        for (AccountEntity ce : listOfAccount) {
             AccountDTO dto = AccountDTO.fromEntity(ce);
             accountList.add(dto);
         }

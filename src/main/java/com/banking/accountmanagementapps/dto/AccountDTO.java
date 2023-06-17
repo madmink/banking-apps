@@ -2,9 +2,8 @@ package com.banking.accountmanagementapps.dto;
 
 import com.banking.accountmanagementapps.entity.AccountEntity;
 import com.banking.accountmanagementapps.entity.CustomerEntity;
-import com.banking.accountmanagementapps.model.AccountType;
-import com.banking.accountmanagementapps.model.TransactionType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,11 +19,11 @@ public class AccountDTO {
     private String accountNumber;
     @NotEmpty(message = "Field must not be empty")
     private String accountType;
-    @NotEmpty(message = "Field must not be empty")
+    @NotNull(message = "Field must not be empty")
     private BigDecimal balance;
     private Long customerId;
 
-    public AccountEntity toEntity(CustomerEntity customerEntity){
+    public AccountEntity toEntity(){
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(this.id);
         accountEntity.setAccountNumber(this.accountNumber);
