@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -137,12 +139,46 @@ class AccountServiceImplTest {
 
     @Test
     void testDeleteAccount_AccountHasBalance(){
+        AccountEntity account = new AccountEntity();
+        account.setId(1L);
+        account.setBalance(BigDecimal.valueOf(1000));
+        account.setAccountNumber("1234");
 
+        when(accountRepository.findByAccountNumber(anyString())).thenReturn(Optional.of(account));
+
+        BusinessException exception = assertThrows(BusinessException.class,() -> accountServiceImpl.deleteAccount("1234"));
+        assertEquals("ACCOUNT_HAS_BALANCE", exception.getErrors().get(0).getCode());
     }
 
     @Test
     void testGetAccountByCustomerId(){
+        Long customerId = 1L;
+        CustomerEntity customer = new CustomerEntity();
+        customer.setId(customerId);
 
+        AccountEntity accountSaving = new AccountEntity();
+        accountSaving.setId(1L);
+        accountSaving.setAccountNumber("123");
+        accountSaving.setAccountType("SAVING");
+        accountSaving.setBalance(BigDecimal.valueOf(12241));
+        accountSaving.setCustomer(customer);
+
+        AccountEntity accountChecking = new AccountEntity();
+        accountChecking.setId(2L);
+        accountChecking.setAccountNumber("456");
+        accountChecking.setAccountType("SAVING");
+        accountChecking.setBalance(BigDecimal.valueOf(12241));
+        accountChecking.setCustomer(customer);
+
+        List<AccountEntity> accountEntities = Arrays.asList(accountSaving, accountChecking);
+
+        when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(accountEntities);
+
+        List<AccountDTO> accountDTOS = accountServiceImpl.getAccountByCustomerId(customerId);
+        assertEquals(2, accountDTOS.size());
+        assertEquals("123", accountDTOS.get(0).getAccountNumber());
+        assertEquals("456",accountDTOS.get(1).getAccountNumber());
+        verify(accountRepository,times(1)).findAllByCustomerId(customerId);
 
     }
 }
