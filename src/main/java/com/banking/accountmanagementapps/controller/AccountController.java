@@ -40,9 +40,9 @@ public class AccountController {
     }
 
     @DeleteMapping("delete/{accountNumber}")
-    public ResponseEntity<String> deleteAccount(@PathVariable("customerId") String accountNumber){
+    public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") String accountNumber){
         accountService.deleteAccount(accountNumber);
-        return new ResponseEntity<>("Account Has Been Deleted Successfully", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Account Has Been Deleted Successfully", HttpStatus.OK);
     }
 
 

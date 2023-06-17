@@ -1,6 +1,5 @@
-package com.banking.accountmanagementapps.ControllerTest;
+package com.banking.accountmanagementapps.controller;
 
-import com.banking.accountmanagementapps.controller.CustomerController;
 import com.banking.accountmanagementapps.dto.CustomerDTO;
 import com.banking.accountmanagementapps.service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;

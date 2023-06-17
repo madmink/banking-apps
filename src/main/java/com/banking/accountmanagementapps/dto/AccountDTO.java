@@ -23,7 +23,7 @@ public class AccountDTO {
     private BigDecimal balance;
     private Long customerId;
 
-    public AccountEntity toEntity(){
+    public AccountEntity toEntity(CustomerEntity customerEntity){
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(this.id);
         accountEntity.setAccountNumber(this.accountNumber);

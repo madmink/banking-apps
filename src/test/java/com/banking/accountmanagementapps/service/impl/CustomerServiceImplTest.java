@@ -1,4 +1,4 @@
-package com.banking.accountmanagementapps;
+package com.banking.accountmanagementapps.service.impl;
 
 import com.banking.accountmanagementapps.dto.CustomerDTO;
 import com.banking.accountmanagementapps.entity.AccountEntity;
@@ -6,7 +6,6 @@ import com.banking.accountmanagementapps.entity.CustomerEntity;
 import com.banking.accountmanagementapps.exception.BusinessException;
 import com.banking.accountmanagementapps.repository.AccountRepository;
 import com.banking.accountmanagementapps.repository.CustomerRepository;
-import com.banking.accountmanagementapps.service.impl.CustomerServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.*;
 class CustomerServiceImplTest {
 
 	@InjectMocks
-	CustomerServiceImpl customerService;
+	CustomerServiceImpl customerServiceImpl;
 
 	@Mock
 	CustomerRepository customerRepository;
@@ -47,7 +46,7 @@ class CustomerServiceImplTest {
 
 		when(customerRepository.save(any(CustomerEntity.class))).thenReturn(entity);
 
-		CustomerDTO result = customerService.createCustomer(dto);
+		CustomerDTO result = customerServiceImpl.createCustomer(dto);
 		assertEquals(dto.getId(), result.getId());
 	}
 
@@ -61,7 +60,7 @@ class CustomerServiceImplTest {
 		when(customerRepository.findByIdentityNumber(anyString())).thenReturn(Optional.of(entity));
 
 		BusinessException exception = assertThrows(BusinessException.class, () -> {
-			customerService.createCustomer(dto);
+			customerServiceImpl.createCustomer(dto);
 		});
 		assertEquals("IDENTITY_NUMBER_ALREADY_USED",exception.getErrors().get(0).getCode());
 
@@ -76,7 +75,7 @@ class CustomerServiceImplTest {
 		List<CustomerEntity> entities = Collections.singletonList(entity);
 		when(customerRepository.findAllById(id)).thenReturn(entities);
 
-		List<CustomerDTO> result = customerService.getCustomerById(id);
+		List<CustomerDTO> result = customerServiceImpl.getCustomerById(id);
 		assertEquals(1, result.size());
 	}
 
@@ -92,7 +91,7 @@ class CustomerServiceImplTest {
 		when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
 		when(customerRepository.save(any(CustomerEntity.class))).thenReturn(entity);
 
-		CustomerDTO result = customerService.updateCustomer(dto, dto.getId());
+		CustomerDTO result = customerServiceImpl.updateCustomer(dto, dto.getId());
 		assertEquals(dto.getId(), result.getId());
 	}
 
@@ -101,7 +100,7 @@ class CustomerServiceImplTest {
 		when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		assertThrows(BusinessException.class, () -> {
-			customerService.updateCustomer(new CustomerDTO(), 1L);
+			customerServiceImpl.updateCustomer(new CustomerDTO(), 1L);
 		});
 	}
 
@@ -113,7 +112,7 @@ class CustomerServiceImplTest {
 		when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
 		when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(Collections.emptyList());
 
-		assertDoesNotThrow(() -> customerService.deleteCustomer(1L));
+		assertDoesNotThrow(() -> customerServiceImpl.deleteCustomer(1L));
 	}
 
 	@Test
@@ -121,7 +120,7 @@ class CustomerServiceImplTest {
 		when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		BusinessException exception = assertThrows(BusinessException.class, () -> {
-			customerService.deleteCustomer(1L);
+			customerServiceImpl.deleteCustomer(1L);
 		});
 
 		assertEquals("CUSTOMER_NOT_FOUND", exception.getErrors().get(0).getCode());
@@ -136,7 +135,7 @@ class CustomerServiceImplTest {
 		when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(Collections.singletonList(new AccountEntity()));
 
 		BusinessException exception = assertThrows(BusinessException.class, () -> {
-			customerService.deleteCustomer(1L);
+			customerServiceImpl.deleteCustomer(1L);
 		});
 
 		assertEquals("CUSTOMER_HAS_UNRESOLVED_ACCOUNT", exception.getErrors().get(0).getCode());

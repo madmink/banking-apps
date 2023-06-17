@@ -1,6 +1,5 @@
-package com.banking.accountmanagementapps.ControllerTest;
+package com.banking.accountmanagementapps.controller;
 
-import com.banking.accountmanagementapps.controller.AccountController;
 import com.banking.accountmanagementapps.dto.AccountDTO;
 import com.banking.accountmanagementapps.service.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,8 +19,7 @@ import java.util.Collections;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -73,6 +71,31 @@ class AccountControllerTest {
 
         when(accountService.getAccountByCustomerId(anyLong())).thenReturn(Collections.singletonList(accountDTO));
         mockMvc.perform(get("/api/account/{customerId}",accountDTO.getCustomerId())).andExpect(status().isOk()).andExpect(content().json(objectMapper.writeValueAsString(Collections.singletonList(accountDTO))));
+    }
+
+    @Test
+    void testUpdateAccount() throws Exception{
+        String accountNumber = "123124";
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(1L);
+        accountDTO.setCustomerId(2L);
+        accountDTO.setAccountType("KTP");
+
+
+        when(accountService.updateAccount(any(AccountDTO.class), anyString())).thenReturn(accountDTO);
+        mockMvc.perform(put("/api/account/update/" + accountNumber).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(accountDTO))).andExpect(status().isOk()).andExpect(content().json(objectMapper.writeValueAsString(accountDTO)));
+
+        verify(accountService, times(1)).updateAccount(any(AccountDTO.class), anyString());
+
+
+
+    }
+
+    @Test
+    void deleteAccount() throws Exception{
+        doNothing().when(accountService).deleteAccount(anyString());
+
+        mockMvc.perform(delete("/api/account/delete/{accountNumber}",1L).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
     }
 
 
