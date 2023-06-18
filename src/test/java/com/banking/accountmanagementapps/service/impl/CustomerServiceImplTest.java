@@ -8,6 +8,7 @@ import com.banking.accountmanagementapps.repository.AccountRepository;
 import com.banking.accountmanagementapps.repository.CustomerRepository;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,124 +21,145 @@ import static org.mockito.Mockito.*;
 
 class CustomerServiceImplTest {
 
-	@InjectMocks
-	CustomerServiceImpl customerServiceImpl;
+    @InjectMocks
+    CustomerServiceImpl customerServiceImpl;
 
-	@Mock
-	CustomerRepository customerRepository;
+    @Mock
+    CustomerRepository customerRepository;
 
-	@Mock
-	AccountRepository accountRepository;
+    @Mock
+    AccountRepository accountRepository;
 
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.initMocks(this);
-	}
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	void testCreateCustomer() {
-		CustomerDTO dto = new CustomerDTO();
-		dto.setId(1L);
-		// ... set other properties ...
 
-		CustomerEntity entity = new CustomerEntity();
-		entity.setId(1L);
-		// ... set properties similar to dto ...
+    @Nested
+    class AllTestCreateCustomer {
 
-		when(customerRepository.save(any(CustomerEntity.class))).thenReturn(entity);
 
-		CustomerDTO result = customerServiceImpl.createCustomer(dto);
-		assertEquals(dto.getId(), result.getId());
-	}
+        @Test
+        void TestCreateCustomer() {
+            CustomerDTO dto = new CustomerDTO();
+            dto.setId(1L);
+            // ... set other properties ...
 
-	@Test
-	void testCreateCustomer_identityNumberAlreadyUsed(){
-		CustomerDTO dto = new CustomerDTO();
-		dto.setId(1L);
-		dto.setIdentityNumber("ID123");
-		CustomerEntity entity = new CustomerEntity();
-		entity.setIdentityNumber("ID123");
-		when(customerRepository.findByIdentityNumber(anyString())).thenReturn(Optional.of(entity));
+            CustomerEntity entity = new CustomerEntity();
+            entity.setId(1L);
+            // ... set properties similar to dto ...
 
-		BusinessException exception = assertThrows(BusinessException.class, () -> {
-			customerServiceImpl.createCustomer(dto);
-		});
-		assertEquals("IDENTITY_NUMBER_ALREADY_USED",exception.getErrors().get(0).getCode());
+            when(customerRepository.save(any(CustomerEntity.class))).thenReturn(entity);
 
-	}
+            CustomerDTO result = customerServiceImpl.createCustomer(dto);
+            assertEquals(dto.getId(), result.getId());
+        }
 
-	@Test
-	void testGetCustomerById() {
-		Long id = 1L;
-		CustomerEntity entity = new CustomerEntity();
-		// ... set properties ...
+        @Test
+        void TestCreateCustomer_identityNumberAlreadyUsed() {
+            CustomerDTO dto = new CustomerDTO();
+            dto.setId(1L);
+            dto.setIdentityNumber("ID123");
+            CustomerEntity entity = new CustomerEntity();
+            entity.setIdentityNumber("ID123");
+            when(customerRepository.findByIdentityNumber(anyString())).thenReturn(Optional.of(entity));
 
-		List<CustomerEntity> entities = Collections.singletonList(entity);
-		when(customerRepository.findAllById(id)).thenReturn(entities);
+            BusinessException exception = assertThrows(BusinessException.class, () -> {
+                customerServiceImpl.createCustomer(dto);
+            });
+            assertEquals("IDENTITY_NUMBER_ALREADY_USED", exception.getErrors().get(0).getCode());
 
-		List<CustomerDTO> result = customerServiceImpl.getCustomerById(id);
-		assertEquals(1, result.size());
-	}
+        }
+    }
 
-	@Test
-	void testUpdateCustomer() {
-		CustomerDTO dto = new CustomerDTO();
-		dto.setId(1L);
-		// ... set other properties ...
+    @Test
+    void TestGetCustomerById() {
+        Long id = 1L;
+        CustomerEntity entity = new CustomerEntity();
+        // ... set properties ...
 
-		CustomerEntity entity = new CustomerEntity();
-		// ... set properties similar to dto ...
+        List<CustomerEntity> entities = Collections.singletonList(entity);
+        when(customerRepository.findAllById(id)).thenReturn(entities);
 
-		when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
-		when(customerRepository.save(any(CustomerEntity.class))).thenReturn(entity);
+        List<CustomerDTO> result = customerServiceImpl.getCustomerById(id);
+        assertEquals(1, result.size());
+    }
 
-		CustomerDTO result = customerServiceImpl.updateCustomer(dto, dto.getId());
-		assertEquals(dto.getId(), result.getId());
-	}
+    @Nested
+    class AllTestUpdateCustomer {
+        @Test
+        void TestUpdateCustomer() {
+            CustomerDTO dto = new CustomerDTO();
+            dto.setId(1L);
+            // ... set other properties ...
 
-	@Test
-	void testUpdateCustomer_NotFound() {
-		when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+            CustomerEntity entity = new CustomerEntity();
+            // ... set properties similar to dto ...
 
-		assertThrows(BusinessException.class, () -> {
-			customerServiceImpl.updateCustomer(new CustomerDTO(), 1L);
-		});
-	}
+            when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+            when(customerRepository.save(any(CustomerEntity.class))).thenReturn(entity);
 
-	@Test
-	void testDeleteCustomer() {
-		CustomerEntity entity = new CustomerEntity();
-		// ... set properties ...
+            CustomerDTO result = customerServiceImpl.updateCustomer(dto, dto.getId());
+            assertEquals(dto.getId(), result.getId());
+        }
 
-		when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
-		when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(Collections.emptyList());
+        @Test
+        void TestUpdateCustomer_NotFound() {
+            // Given
+            CustomerDTO customerDTO = new CustomerDTO();
+            long customerId = 1L;
 
-		assertDoesNotThrow(() -> customerServiceImpl.deleteCustomer(1L));
-	}
+            // When
+            when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
 
-	@Test
-	void testDeleteCustomer_NotFound() {
-		when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+            // Then
+            assertThrows(BusinessException.class, () -> {
+                customerServiceImpl.updateCustomer(customerDTO, customerId);
+            });
+        }
 
-		BusinessException exception = assertThrows(BusinessException.class, () -> {
-			customerServiceImpl.deleteCustomer(1L);
-		});
 
-		assertEquals("CUSTOMER_NOT_FOUND", exception.getErrors().get(0).getCode());
-	}
+        @Nested
+        class AllTestDeleteCustomer {
 
-	@Test
-	void testDeleteCustomer_AccountExist() {
-		CustomerEntity entity = new CustomerEntity();
-		// ... set properties ...
 
-		when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
-		when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(Collections.singletonList(new AccountEntity()));
+            @Test
+            void TestDeleteCustomer() {
+                CustomerEntity entity = new CustomerEntity();
+                // ... set properties ...
 
-		BusinessException exception = assertThrows(BusinessException.class, () -> {
-			customerServiceImpl.deleteCustomer(1L);
-		});
+                when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+                when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(Collections.emptyList());
 
-		assertEquals("CUSTOMER_HAS_UNRESOLVED_ACCOUNT", exception.getErrors().get(0).getCode());
-	}
+                assertDoesNotThrow(() -> customerServiceImpl.deleteCustomer(1L));
+            }
+
+            @Test
+            void TestDeleteCustomer_NotFound() {
+                when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+                BusinessException exception = assertThrows(BusinessException.class, () -> {
+                    customerServiceImpl.deleteCustomer(1L);
+                });
+
+                assertEquals("CUSTOMER_NOT_FOUND", exception.getErrors().get(0).getCode());
+            }
+
+            @Test
+            void TestDeleteCustomer_AccountExist() {
+                CustomerEntity entity = new CustomerEntity();
+                // ... set properties ...
+
+                when(customerRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+                when(accountRepository.findAllByCustomerId(anyLong())).thenReturn(Collections.singletonList(new AccountEntity()));
+
+                BusinessException exception = assertThrows(BusinessException.class, () -> {
+                    customerServiceImpl.deleteCustomer(1L);
+                });
+
+                assertEquals("CUSTOMER_HAS_UNRESOLVED_ACCOUNT", exception.getErrors().get(0).getCode());
+            }
+        }
+    }
 }

@@ -29,10 +29,8 @@ public class AccountDTO {
         accountEntity.setAccountNumber(this.accountNumber);
         accountEntity.setBalance(this.balance);
         accountEntity.setAccountType(this.accountType);
-
-        CustomerEntity customer = new CustomerEntity();
-        customer.setId(this.customerId);
-        accountEntity.setCustomer(customer);
+        
+        accountEntity.setCustomer(customerEntity);
         return accountEntity;
     }
 
