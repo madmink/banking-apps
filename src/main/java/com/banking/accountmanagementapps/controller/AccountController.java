@@ -26,32 +26,23 @@ public class AccountController {
         return new ResponseEntity<>(createdCustomerDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("getAccountByCustomerId/{customerId}")
-    public ResponseEntity<List<AccountDTO>> getAccountByAccountNumber(@PathVariable("customerId") Long customerId){
-        List<AccountDTO> accountDTOList = accountService.getAccountByCustomerId(customerId);
-        ResponseEntity<List<AccountDTO>> responseEntity = new ResponseEntity<>(accountDTOList,HttpStatus.OK);
-        return responseEntity;
-    }
 
     @PutMapping("update/{accountNumber}")
     public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable String accountNumber){
         AccountDTO updateAccountDTO = accountService.updateAccount(accountDTO,accountNumber);
-        ResponseEntity<AccountDTO> responseEntity = new ResponseEntity<>(updateAccountDTO, HttpStatus.OK);
-        return responseEntity;
-
+        return new ResponseEntity<>(updateAccountDTO, HttpStatus.OK);
     }
 
-    @GetMapping("{customerId}")
-    public ResponseEntity<List<AccountDTO>> getAccountByCustomerId(@RequestParam("customerId") Long customerId){
+    @GetMapping("/{customerId}")
+    public ResponseEntity<List<AccountDTO>> getAccountByCustomerId(@PathVariable("customerId") Long customerId){
         List<AccountDTO> accountDTOList = accountService.getAccountByCustomerId(customerId);
-        ResponseEntity<List<AccountDTO>> responseEntity = new ResponseEntity<>(accountDTOList,HttpStatus.OK);
-        return responseEntity;
+        return new ResponseEntity<>(accountDTOList,HttpStatus.OK);
     }
 
     @DeleteMapping("delete/{accountNumber}")
-    public ResponseEntity<String> deleteAccount(@PathVariable String accountNumber){
+    public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") String accountNumber){
         accountService.deleteAccount(accountNumber);
-        return new ResponseEntity<>("Account Has Been Deleted Successfully", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Account Has Been Deleted Successfully", HttpStatus.OK);
     }
 
 

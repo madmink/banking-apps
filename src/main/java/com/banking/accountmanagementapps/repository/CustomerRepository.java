@@ -9,6 +9,4 @@ import java.util.Optional;
 public interface CustomerRepository extends CrudRepository<CustomerEntity, Long>{
     List<CustomerEntity> findAllById(Long customerId);
     Optional<CustomerEntity> findByIdentityNumber(String identityNumber);
-
-
 }

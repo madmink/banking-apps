@@ -1,6 +1,5 @@
 package com.banking.accountmanagementapps.entity;
 
-import com.banking.accountmanagementapps.model.TransactionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
