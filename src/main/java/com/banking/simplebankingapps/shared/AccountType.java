@@ -4,6 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum AccountType {
-    CHECKING,
-    SAVING
+    SAVINGS("Savings"),
+    CHECKING("Checking");
+
+    private final String name;
+
+    AccountType(String name) {
+        this.name = name;
+    }
 }

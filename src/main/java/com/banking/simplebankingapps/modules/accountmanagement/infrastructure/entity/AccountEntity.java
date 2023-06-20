@@ -2,6 +2,7 @@ package com.banking.simplebankingapps.modules.accountmanagement.infrastructure.e
 
 import com.banking.simplebankingapps.modules.customermanagement.infrastructure.entity.CustomerEntity;
 import com.banking.simplebankingapps.modules.transactionmanagement.infrastructure.entity.TransactionEntity;
+import com.banking.simplebankingapps.shared.AccountType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,8 @@ public class AccountEntity {
     @Column(name = "balance", nullable = false)
     private BigDecimal balance;
 
-    private String accountType;
+    @Enumerated(EnumType.STRING)  // Add this annotation to map the enum as a string
+    private AccountType accountType;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -36,7 +38,7 @@ public class AccountEntity {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TransactionEntity> transactions;
 
-    public AccountEntity(String accountNumber, BigDecimal balance, CustomerEntity customer, List<TransactionEntity> transactions, String accountType) {
+    public AccountEntity(String accountNumber, BigDecimal balance, CustomerEntity customer, List<TransactionEntity> transactions, AccountType accountType) {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.customer = customer;

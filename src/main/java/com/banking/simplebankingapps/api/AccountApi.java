@@ -28,20 +28,20 @@ public class AccountApi {
     }
 
 
-    @PutMapping("/{accountNumber}")
+    @PutMapping("/update/{accountNumber}")
     public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable String accountNumber){
         AccountDTO updatedAccountDTO = accountService.updateAccount(accountDTO, accountNumber);
         return new ResponseEntity<>(updatedAccountDTO, HttpStatus.OK);
     }
 
 
-    @GetMapping("/customer/{customerId}")
+    @GetMapping("/detail/{customerId}")
     public ResponseEntity<List<AccountDTO>> getAccountByCustomerId(@PathVariable("customerId") Long customerId){
         List<AccountDTO> accountDTOList = accountService.getAccountByCustomerId(customerId);
         return new ResponseEntity<>(accountDTOList,HttpStatus.OK);
     }
 
-    @DeleteMapping("/{accountNumber}")
+    @DeleteMapping("/delete/{accountNumber}")
     public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") String accountNumber){
         accountService.deleteAccount(accountNumber);
         return new ResponseEntity<>("Account has been deleted successfully", HttpStatus.OK);

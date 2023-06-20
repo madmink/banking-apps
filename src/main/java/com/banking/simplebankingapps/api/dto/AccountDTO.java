@@ -2,6 +2,8 @@ package com.banking.simplebankingapps.api.dto;
 
 import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Account;
 import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
+import com.banking.simplebankingapps.shared.AccountType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,32 +11,27 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class AccountDTO {
     private Long id;
     private String accountNumber;
-    private String accountType;
     private BigDecimal balance;
-    private Long customerId;
+    private CustomerDTO customer;
+    private AccountType accountType;
 
-    public Account toDomain(Customer customer){
-        Account account = new Account();
-        account.setId(this.id);
-        account.setAccountNumber(this.accountNumber);
-        account.setBalance(this.balance);
-        account.setCustomer(customer);
-        account.setAccountType(this.accountType); // Add this line
-        return account;
+    public Account toDomain() {
+        Customer customerDomain = null;
+        if (this.customer != null) {
+            customerDomain = this.customer.toDomain();
+        }
+        return new Account(this.id, this.accountNumber, this.balance, customerDomain, this.accountType, null);
     }
 
-    public static AccountDTO fromDomain(Account account){
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setId(account.getId());
-        accountDTO.setAccountNumber(account.getAccountNumber());
-        accountDTO.setBalance(account.getBalance());
-        accountDTO.setCustomerId(account.getCustomer().getId());
-        accountDTO.setAccountType(account.getAccountType());  // Add this line
-        return accountDTO;
+    public static AccountDTO fromDomain(Account account) {
+        CustomerDTO customerDTO = null;
+        if (account.getCustomer() != null) {
+            customerDTO = CustomerDTO.fromDomain(account.getCustomer());
+        }
+        return new AccountDTO(account.getId(), account.getAccountNumber(), account.getBalance(), customerDTO, account.getAccountType());
     }
-
-    }
-
+}

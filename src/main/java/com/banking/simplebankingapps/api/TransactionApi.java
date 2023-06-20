@@ -18,7 +18,7 @@ public class TransactionApi {
         this.transactionManagementApplicationService = transactionManagementApplicationService;
     }
 
-    @PostMapping("/deposit/{accountNumber}")
+    @PostMapping("/deposit/{accountNumber}") //success but id still null,recheck tommorow
     public ResponseEntity<TransactionDTO> deposit(@PathVariable String accountNumber, @RequestParam BigDecimal amount){
         TransactionDTO depositTransaction = transactionManagementApplicationService.deposit(accountNumber, amount);
         return new ResponseEntity<>(depositTransaction, HttpStatus.CREATED);

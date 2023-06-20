@@ -5,6 +5,7 @@ import com.banking.simplebankingapps.modules.accountmanagement.infrastructure.en
 import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
 import com.banking.simplebankingapps.modules.transactionmanagement.domain.model.Transaction;
 import com.banking.simplebankingapps.modules.transactionmanagement.infrastructure.entity.TransactionEntity;
+import com.banking.simplebankingapps.shared.AccountType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -23,10 +23,10 @@ public class Account {
     private String accountNumber;
     private BigDecimal balance;
     private Customer customer;
-    private String accountType;
+    private AccountType accountType;
     private List<Transaction> transactions;
 
-    public Account(Long id, String accountNumber, BigDecimal balance, Customer customer, String accountType , List<Transaction> transactions) {
+    public Account(Long id, String accountNumber, BigDecimal balance, Customer customer, AccountType accountType , List<Transaction> transactions) {
         this.id = id;
         this.accountNumber = accountNumber;
         this.balance = balance;
@@ -69,12 +69,12 @@ public class Account {
         accountEntity.setAccountNumber(this.accountNumber);
         accountEntity.setBalance(this.balance);
         accountEntity.setCustomer(this.customer.toEntityCustomer());
+        accountEntity.setAccountType(this.accountType);
         if (this.transactions != null) {
             accountEntity.setTransactions(this.transactions.stream().map(Transaction::toEntity).toList());
         }
         return accountEntity;
     }
-
 
     public static Account fromAccEntity(AccountEntity accountEntity) {
         List<TransactionEntity> transactionEntities = accountEntity.getTransactions() == null ? Collections.emptyList() : accountEntity.getTransactions();
@@ -88,6 +88,4 @@ public class Account {
                 transactionEntities.stream().map(Transaction::fromEntity).toList()
         );
     }
-
-
 }

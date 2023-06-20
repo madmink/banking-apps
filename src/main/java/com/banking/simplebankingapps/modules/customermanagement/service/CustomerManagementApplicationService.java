@@ -65,17 +65,20 @@ public class CustomerManagementApplicationService {
     }
 
     public void deleteCustomer(Long customerId) {
-        Optional<CustomerEntity> optionalCustomerEntity = Optional.ofNullable(customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerManagementException("CUSTOMER_ID_ERROR", "Customer Not Found, please check the Customer Id")));
+        Optional<CustomerEntity> optionalCustomerEntity = customerRepository.findById(customerId);
 
-        CustomerEntity customerEntity = optionalCustomerEntity.get();
-        List<Account> accounts = accountRepository.findAllByCustomerId(customerId);
+        CustomerEntity customerEntity = optionalCustomerEntity.orElseThrow(() ->
+                new CustomerManagementException("CUSTOMER_ID_ERROR", "Customer Not Found, please check the Customer Id"));
 
-        if(!accounts.isEmpty()){
+        List<AccountEntity> accounts = accountRepository.findAllByCustomerId(customerId);
+
+        if (!accounts.isEmpty()) {
             throw new CustomerManagementException("CUSTOMER_ID_ERROR", "Customer Still has active accounts. Please close the accounts first");
         }
         customerRepository.delete(customerEntity);
     }
+
+
 
 
 

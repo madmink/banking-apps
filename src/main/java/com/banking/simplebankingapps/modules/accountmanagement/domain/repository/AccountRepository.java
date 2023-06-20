@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository <AccountEntity, Long>{
     Optional<AccountEntity> findByAccountNumber(String accountNumber);
-    List<Account> findAllByCustomerId(Long customerId);
+    List<AccountEntity> findAllByCustomerId(Long customerId);
 }

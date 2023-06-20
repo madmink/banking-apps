@@ -16,26 +16,24 @@ import java.util.*;
 @Service
 public class AccountManagementApplicationService {
 
+    private final CustomerRepository customerRepository;
+    private final AccountRepository accountRepository;
     @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    public AccountManagementApplicationService(CustomerRepository customerRepository, AccountRepository accountRepository) {
+        this.customerRepository = customerRepository;
+        this.accountRepository = accountRepository;
+    }
 
     public AccountDTO createAccount(AccountDTO accountDTO) {
-        Customer customer = Customer.fromEntity(customerRepository.findById(accountDTO.getCustomerId())
-                .orElseThrow(() -> new AccountManagementException("Customer ID Doesn't Exist, Please Create New Customer Id")));
+        Customer customer = Customer.fromEntity(customerRepository.findById(accountDTO.getCustomer().getId())
+                .orElseThrow(() -> new AccountManagementException("Customer ID doesn't exist, please create a new Customer ID")));
 
-        Account account = accountDTO.toDomain(customer);
+        Account account = accountDTO.toDomain();
+        account.setCustomer(customer);
 
-        // convert to entity before saving
-        AccountEntity accountEntity = account.toAccEntity();
-        accountEntity = accountRepository.save(accountEntity);
+        AccountEntity accountEntity = accountRepository.save(account.toAccEntity());
 
-        // convert back to domain for returning
-        account = Account.fromAccEntity(accountEntity);
-
-        return AccountDTO.fromDomain(account);
+        return AccountDTO.fromDomain(Account.fromAccEntity(accountEntity));
     }
 
 
@@ -44,7 +42,7 @@ public class AccountManagementApplicationService {
                 .orElseThrow(() -> new AccountManagementException("Account doesn't exist in our system, please contact customer service for further assistance")));
 
         account.setAccountNumber(accountDTO.getAccountNumber());
-        account.setAccountType(accountDTO.getAccountType());
+        account.setAccountType(accountDTO.getAccountType()); // Assign the AccountType enum directly
         account.setBalance(accountDTO.getBalance());
 
         AccountEntity accountEntity = account.toAccEntity();
@@ -66,11 +64,11 @@ public class AccountManagementApplicationService {
     }
 
     public List<AccountDTO> getAccountByCustomerId(Long customerId) {
-        List<Account> accounts = accountRepository.findAllByCustomerId(customerId);
+        List<AccountEntity> accounts = accountRepository.findAllByCustomerId(customerId);
         List<AccountDTO> accountList = new ArrayList<>();
 
-        for (Account account : accounts) {
-            AccountDTO dto = AccountDTO.fromDomain(account);
+        for (AccountEntity account : accounts) {
+            AccountDTO dto = AccountDTO.fromDomain(Account.fromAccEntity(account));
             accountList.add(dto);
         }
         return accountList;
