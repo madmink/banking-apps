@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.banking</groupId>
-	<artifactId>account-management-apps</artifactId>
+	<artifactId>simple-banking-apps</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>account-management-apps</name>
 	<description>Simple demo transaction apps in bank</description>
