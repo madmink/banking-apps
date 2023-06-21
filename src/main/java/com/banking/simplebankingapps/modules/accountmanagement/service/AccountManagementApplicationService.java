@@ -28,12 +28,12 @@ public class AccountManagementApplicationService {
         Customer customer = Customer.fromEntity(customerRepository.findById(accountDTO.getCustomer().getId())
                 .orElseThrow(() -> new AccountManagementException("Customer ID doesn't exist, please create a new Customer ID")));
 
-        Account account = accountDTO.toDomain();
+        Account account = accountDTO.accountDtoToAccountDomain();
         account.setCustomer(customer);
 
         AccountEntity accountEntity = accountRepository.save(account.toAccEntity());
 
-        return AccountDTO.fromDomain(Account.fromAccEntity(accountEntity));
+        return AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccEntity(accountEntity));
     }
 
 
@@ -48,7 +48,7 @@ public class AccountManagementApplicationService {
         AccountEntity accountEntity = account.toAccEntity();
         accountRepository.save(accountEntity);
 
-        return AccountDTO.fromDomain(account);
+        return AccountDTO.fromAccountDomainToAccountDTO(account);
     }
 
 
@@ -68,7 +68,7 @@ public class AccountManagementApplicationService {
         List<AccountDTO> accountList = new ArrayList<>();
 
         for (AccountEntity account : accounts) {
-            AccountDTO dto = AccountDTO.fromDomain(Account.fromAccEntity(account));
+            AccountDTO dto = AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccEntity(account));
             accountList.add(dto);
         }
         return accountList;

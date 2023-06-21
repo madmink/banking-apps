@@ -19,15 +19,15 @@ public class AccountDTO {
     private CustomerDTO customer;
     private AccountType accountType;
 
-    public Account toDomain() {
+    public Account accountDtoToAccountDomain() {
         Customer customerDomain = null;
         if (this.customer != null) {
-            customerDomain = this.customer.toDomain();
+            customerDomain = this.customer.customerDTOtoCustomerDomain();
         }
         return new Account(this.id, this.accountNumber, this.balance, customerDomain, this.accountType, null);
     }
 
-    public static AccountDTO fromDomain(Account account) {
+    public static AccountDTO fromAccountDomainToAccountDTO(Account account) {
         CustomerDTO customerDTO = null;
         if (account.getCustomer() != null) {
             customerDTO = CustomerDTO.fromDomain(account.getCustomer());

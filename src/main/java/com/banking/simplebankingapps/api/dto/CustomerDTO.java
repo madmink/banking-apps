@@ -30,7 +30,7 @@ public class CustomerDTO {
     @NotEmpty(message = "Identity Number must not be empty")
     private String identityNumber;
 
-    public Customer toDomain() {
+    public Customer customerDTOtoCustomerDomain() {
         return new Customer(this.id, this.firstName, this.lastName, this.email, this.address,
                 this.phoneNumber, this.identityType, this.identityNumber);
     }

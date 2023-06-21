@@ -1,7 +1,6 @@
 package com.banking.simplebankingapps.modules.customermanagement.service;
 
 import com.banking.simplebankingapps.api.dto.CustomerDTO;
-import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Account;
 import com.banking.simplebankingapps.modules.accountmanagement.infrastructure.entity.AccountEntity;
 import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
 import com.banking.simplebankingapps.modules.customermanagement.domain.repository.CustomerRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerManagementApplicationService {
@@ -30,7 +28,7 @@ public class CustomerManagementApplicationService {
             throw new CustomerManagementException("IDENTITY_NUMBER_ALREADY_USED" , "Identity Number Already Used, contact customer service for assistance");
         }
         // Proceed to create a new customer
-        Customer customer = customerDTO.toDomain();
+        Customer customer = customerDTO.customerDTOtoCustomerDomain();
         CustomerEntity customerEntity = customer.toEntityCustomer();
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
         Customer savedCustomer = Customer.fromEntity(savedEntity);
@@ -53,7 +51,7 @@ public class CustomerManagementApplicationService {
             throw new CustomerManagementException("CUSTOMER_NOT_FOUND", "The requested customer was not found.");
         }
 
-        Customer customer = customerDTO.toDomain();
+        Customer customer = customerDTO.customerDTOtoCustomerDomain();
 
         CustomerEntity customerEntity = optionalCustomerEntity.get();
         customerEntity.updateFromDomain(customer);
