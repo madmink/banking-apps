@@ -1,17 +1,21 @@
 package com.banking.simplebankingapps.api;
 
+import com.banking.simplebankingapps.api.globalexceptionhandler.CustomErrorType;
+import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
 import com.banking.simplebankingapps.modules.accountmanagement.service.AccountManagementApplicationService;
 import com.banking.simplebankingapps.api.dto.AccountDTO;
+import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/api/account")
 public class AccountApi {
 
     private final AccountManagementApplicationService accountService;
@@ -22,24 +26,41 @@ public class AccountApi {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDTO accountDTO){
-        AccountDTO createdAccountDTO = accountService.createAccount(accountDTO);
-        return new ResponseEntity<>(createdAccountDTO, HttpStatus.CREATED);
+    public ResponseEntity<Object> createAccount(@Valid @RequestBody AccountDTO accountDTO) {
+        try {
+            AccountDTO createdAccountDTO = accountService.createAccount(accountDTO);
+            return ResponseEntity.ok(createdAccountDTO);
+        } catch (AccountManagementException e) {
+            List<String> errorMessages = new ArrayList<>();
+            errorMessages.add(e.getMessage());
+            return new ResponseEntity<>(new CustomErrorType(e.getErrorCode(), errorMessages), HttpStatus.BAD_REQUEST);
+        }
     }
-
 
     @PutMapping("/update/{accountNumber}")
-    public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO accountDTO, @PathVariable String accountNumber){
-        AccountDTO updatedAccountDTO = accountService.updateAccount(accountDTO, accountNumber);
-        return new ResponseEntity<>(updatedAccountDTO, HttpStatus.OK);
+    public ResponseEntity<Object> updateAccount(@PathVariable String accountNumber, @RequestBody AccountDTO accountDTO) {
+        try {
+            AccountDTO updatedAccountDTO = accountService.updateAccount(accountDTO, accountNumber);
+            return ResponseEntity.ok(updatedAccountDTO);
+        } catch (AccountManagementException e) {
+            List<String> errorMessages = new ArrayList<>();
+            errorMessages.add(e.getMessage());
+            return new ResponseEntity<>(new CustomErrorType(e.getErrorCode(), errorMessages), HttpStatus.BAD_REQUEST);
+        }
     }
-
 
     @GetMapping("/detail/{customerId}")
-    public ResponseEntity<List<AccountDTO>> getAccountByCustomerId(@PathVariable("customerId") Long customerId){
-        List<AccountDTO> accountDTOList = accountService.getAccountByCustomerId(customerId);
-        return new ResponseEntity<>(accountDTOList,HttpStatus.OK);
+    public ResponseEntity<Object> getAccountByCustomerId(@PathVariable("customerId") Long customerId) {
+        try {
+            List<AccountDTO> accountDTOList = accountService.getAccountByCustomerId(customerId);
+            return ResponseEntity.ok(accountDTOList);
+        } catch (AccountManagementException e) {
+            List<String> errorMessages = new ArrayList<>();
+            errorMessages.add(e.getMessage());
+            return new ResponseEntity<>(new CustomErrorType(e.getErrorCode(), errorMessages), HttpStatus.BAD_REQUEST);
+        }
     }
+
 
     @DeleteMapping("/delete/{accountNumber}")
     public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") String accountNumber){

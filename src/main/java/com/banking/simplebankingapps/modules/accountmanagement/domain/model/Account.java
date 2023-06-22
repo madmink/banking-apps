@@ -47,7 +47,7 @@ public class Account {
             throw new IllegalArgumentException("Withdraw amount must be non-negative");
         }
         if (this.balance.compareTo(amount) < 0) {
-            throw new AccountManagementException("Insufficient funds to withdraw");
+            throw new AccountManagementException("INSUFFICIENT_FUND","Insufficient funds to withdraw");
         }
         this.balance = this.balance.subtract(amount);
     }
@@ -57,18 +57,18 @@ public class Account {
             throw new IllegalArgumentException("Transfer amount must be non-negative");
         }
         if (this.balance.compareTo(amount) < 0) {
-            throw new AccountManagementException("Insufficient funds to transfer");
+            throw new AccountManagementException("INSUFFICIENT_FUND","Insufficient funds to transfer");
         }
         this.withdraw(amount);
         toAccount.deposit(amount);
     }
 
-    public AccountEntity toAccEntity() {
+    public AccountEntity toAccountEntity() {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(this.id);
         accountEntity.setAccountNumber(this.accountNumber);
         accountEntity.setBalance(this.balance);
-        accountEntity.setCustomer(this.customer.toEntityCustomer());
+        accountEntity.setCustomer(this.customer.toCustomerEntity());
         accountEntity.setAccountType(this.accountType);
         if (this.transactions != null) {
             accountEntity.setTransactions(this.transactions.stream().map(Transaction::toEntity).toList());
@@ -76,14 +76,14 @@ public class Account {
         return accountEntity;
     }
 
-    public static Account fromAccEntity(AccountEntity accountEntity) {
+    public static Account fromAccountEntity(AccountEntity accountEntity) {
         List<TransactionEntity> transactionEntities = accountEntity.getTransactions() == null ? Collections.emptyList() : accountEntity.getTransactions();
 
         return new Account(
                 accountEntity.getId(),
                 accountEntity.getAccountNumber(),
                 accountEntity.getBalance(),
-                Customer.fromEntity(accountEntity.getCustomer()),
+                Customer.fromCustomerEntity(accountEntity.getCustomer()),
                 accountEntity.getAccountType(),
                 transactionEntities.stream().map(Transaction::fromEntity).toList()
         );

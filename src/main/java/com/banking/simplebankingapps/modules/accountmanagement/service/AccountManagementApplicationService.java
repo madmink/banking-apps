@@ -5,8 +5,8 @@ import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Acco
 import com.banking.simplebankingapps.modules.accountmanagement.domain.repository.AccountRepository;
 import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
 import com.banking.simplebankingapps.modules.accountmanagement.infrastructure.entity.AccountEntity;
-import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
 import com.banking.simplebankingapps.modules.customermanagement.domain.repository.CustomerRepository;
+import com.banking.simplebankingapps.modules.customermanagement.infrastructure.entity.CustomerEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,27 +25,30 @@ public class AccountManagementApplicationService {
     }
 
     public AccountDTO createAccount(AccountDTO accountDTO) {
-        Customer customer = Customer.fromEntity(customerRepository.findById(accountDTO.getCustomer().getId())
-                .orElseThrow(() -> new AccountManagementException("Customer ID doesn't exist, please create a new Customer ID")));
+        Optional<CustomerEntity> optionalCustomerEntity = customerRepository.findById(accountDTO.getCustomerId());
+        if (optionalCustomerEntity.isEmpty()) {
+            throw new AccountManagementException("ACCOUNT_ERROR_CUSTOMER_DOES_NOT_EXIST", "Customer Does Not Exist, please contact customer service");
+        }
 
-        Account account = accountDTO.accountDtoToAccountDomain();
-        account.setCustomer(customer);
+        CustomerEntity customerEntity = optionalCustomerEntity.get();
 
-        AccountEntity accountEntity = accountRepository.save(account.toAccEntity());
+        Account account = accountDTO.toAccountDomain(customerEntity);
 
-        return AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccEntity(accountEntity));
+        AccountEntity accountEntity = accountRepository.save(account.toAccountEntity());
+
+        return AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccountEntity(accountEntity));
     }
 
 
     public AccountDTO updateAccount(AccountDTO accountDTO, String accountNumber) {
-        Account account = Account.fromAccEntity(accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new AccountManagementException("Account doesn't exist in our system, please contact customer service for further assistance")));
+        Account account = Account.fromAccountEntity(accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountManagementException("ACCOUNT_NOT_FOUND","Account doesn't exist in our system, please contact customer service for further assistance")));
 
         account.setAccountNumber(accountDTO.getAccountNumber());
         account.setAccountType(accountDTO.getAccountType()); // Assign the AccountType enum directly
         account.setBalance(accountDTO.getBalance());
 
-        AccountEntity accountEntity = account.toAccEntity();
+        AccountEntity accountEntity = account.toAccountEntity();
         accountRepository.save(accountEntity);
 
         return AccountDTO.fromAccountDomainToAccountDTO(account);
@@ -53,14 +56,14 @@ public class AccountManagementApplicationService {
 
 
     public void deleteAccount(String accountNumber) {
-        Account account = Account.fromAccEntity(accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new AccountManagementException("The Account Number Doesn't Exist")));
+        Account account = Account.fromAccountEntity(accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountManagementException("ACCOUNT_NOT_FOUND","The Account Number Doesn't Exist")));
 
         if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
-            throw new AccountManagementException("The Account Has Balance, Account only can be deleted if Balance is 0");
+            throw new AccountManagementException("DELETE_ACCOUNT_CRITERIA_NOT_MET","The Account Has Balance, Account only can be deleted if Balance is 0");
         }
 
-        accountRepository.delete(account.toAccEntity());
+        accountRepository.delete(account.toAccountEntity());
     }
 
     public List<AccountDTO> getAccountByCustomerId(Long customerId) {
@@ -68,7 +71,7 @@ public class AccountManagementApplicationService {
         List<AccountDTO> accountList = new ArrayList<>();
 
         for (AccountEntity account : accounts) {
-            AccountDTO dto = AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccEntity(account));
+            AccountDTO dto = AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccountEntity(account));
             accountList.add(dto);
         }
         return accountList;

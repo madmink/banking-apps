@@ -65,8 +65,8 @@ public class CustomerApi {
 
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable("id") Long customerId) {
+    public ResponseEntity<String> deleteCustomer(@PathVariable("id") Long customerId) {
         customerService.deleteCustomer(customerId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Account has been deleted successfully", HttpStatus.OK);
     }
 }

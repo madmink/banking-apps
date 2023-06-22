@@ -27,11 +27,10 @@ public class CustomerManagementApplicationService {
         if(optionalCustomerEntity.isPresent()) {
             throw new CustomerManagementException("IDENTITY_NUMBER_ALREADY_USED" , "Identity Number Already Used, contact customer service for assistance");
         }
-        // Proceed to create a new customer
         Customer customer = customerDTO.customerDTOtoCustomerDomain();
-        CustomerEntity customerEntity = customer.toEntityCustomer();
+        CustomerEntity customerEntity = customer.toCustomerEntity();
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
-        Customer savedCustomer = Customer.fromEntity(savedEntity);
+        Customer savedCustomer = Customer.fromCustomerEntity(savedEntity);
         return CustomerDTO.fromDomain(savedCustomer);
     }
 
@@ -40,7 +39,7 @@ public class CustomerManagementApplicationService {
         CustomerEntity customerEntity = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerManagementException("CUSTOMER_ID_ERROR","Customer ID doesn't exist, please contact the Customer Service"));
 
-        Customer customer = Customer.fromEntity(customerEntity);
+        Customer customer = Customer.fromCustomerEntity(customerEntity);
         return CustomerDTO.fromDomain(customer);
     }
 
@@ -58,7 +57,7 @@ public class CustomerManagementApplicationService {
 
         CustomerEntity updatedEntity = customerRepository.save(customerEntity);
 
-        Customer updatedCustomer = Customer.fromEntity(updatedEntity);
+        Customer updatedCustomer = Customer.fromCustomerEntity(updatedEntity);
         return CustomerDTO.fromDomain(updatedCustomer);
     }
 

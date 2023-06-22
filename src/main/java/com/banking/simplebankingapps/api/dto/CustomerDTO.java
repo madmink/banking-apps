@@ -31,8 +31,16 @@ public class CustomerDTO {
     private String identityNumber;
 
     public Customer customerDTOtoCustomerDomain() {
-        return new Customer(this.id, this.firstName, this.lastName, this.email, this.address,
-                this.phoneNumber, this.identityType, this.identityNumber);
+        Customer customer = new Customer();
+        customer.setId(this.id);
+        customer.setFirstName(this.firstName);
+        customer.setLastName(this.lastName);
+        customer.setEmail(this.email);
+        customer.setAddress(this.address);
+        customer.setPhoneNumber(this.phoneNumber);
+        customer.setIdentityType(this.identityType);
+        customer.setIdentityNumber(this.identityNumber);
+        return customer;
     }
 
     public static CustomerDTO fromDomain(Customer customer){

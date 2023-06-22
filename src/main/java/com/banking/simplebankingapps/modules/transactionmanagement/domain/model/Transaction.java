@@ -32,7 +32,7 @@ public class Transaction {
         transactionEntity.setDate(this.date);
         transactionEntity.setAmount(this.amount);
         transactionEntity.setTransactionType(this.transactionType);
-        transactionEntity.setAccount(this.account.toAccEntity());
+        transactionEntity.setAccount(this.account.toAccountEntity());
         return transactionEntity;
     }
 
@@ -42,7 +42,7 @@ public class Transaction {
                 transactionEntity.getDate(),
                 transactionEntity.getAmount(),
                 transactionEntity.getTransactionType(),
-                Account.fromAccEntity(transactionEntity.getAccount())  // Assuming you have a fromEntity method in Account
+                Account.fromAccountEntity(transactionEntity.getAccount())  // Assuming you have a fromEntity method in Account
         );
     }
 

@@ -22,7 +22,7 @@ public class Customer {
     private IdentityCardType identityType;
     private String identityNumber;
 
-    public CustomerEntity toEntityCustomer() {
+    public CustomerEntity toCustomerEntity() {
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setId(this.id);
         customerEntity.setFirstName(this.firstName);
@@ -38,7 +38,7 @@ public class Customer {
         return customerEntity;
     }
 
-    public static Customer fromEntity(CustomerEntity customerEntity) {
+    public static Customer fromCustomerEntity(CustomerEntity customerEntity) {
         Customer customer = new Customer();
         customer.setId(customerEntity.getId());
         customer.setFirstName(customerEntity.getFirstName());

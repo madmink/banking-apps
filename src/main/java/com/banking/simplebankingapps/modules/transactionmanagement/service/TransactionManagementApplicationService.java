@@ -27,11 +27,11 @@ public class TransactionManagementApplicationService {
 
     @Transactional
     public TransactionDTO deposit(String accountNumber, BigDecimal amount) {
-        Account account = Account.fromAccEntity(accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new AccountManagementException("Account Doesn't Exist, please create new account to deposit")));
+        Account account = Account.fromAccountEntity(accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountManagementException("DEPOSIT_ERROR_ACCOUNT_NOT_FOUND","Account Doesn't Exist, please create new account to deposit")));
 
         account.deposit(amount);
-        AccountEntity accountEntity = account.toAccEntity();
+        AccountEntity accountEntity = account.toAccountEntity();
         accountRepository.save(accountEntity);
 
         TransactionEntity transactionEntity = new TransactionEntity(
@@ -51,15 +51,15 @@ public class TransactionManagementApplicationService {
 
     @Transactional
     public TransactionDTO withdraw(String accountNumber, BigDecimal amount) {
-        Account account = Account.fromAccEntity(accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new AccountManagementException("Account Doesn't Exist, can't do withdrawal")));
+        Account account = Account.fromAccountEntity(accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountManagementException("WITHDRAW_ERROR", "Account Doesn't Exist, can't do withdrawal")));
 
         if (account.getBalance().compareTo(amount) < 0) {
-            throw new AccountManagementException("Insufficient Fund, can't proceed the withdrawal process");
+            throw new AccountManagementException("WITHDRAW_ERROR","Insufficient Fund, can't proceed the withdrawal process");
         }
 
         account.withdraw(amount);
-        AccountEntity accountEntity = account.toAccEntity();
+        AccountEntity accountEntity = account.toAccountEntity();
         accountRepository.save(accountEntity);
 
         TransactionEntity transactionEntity = new TransactionEntity(
@@ -79,18 +79,18 @@ public class TransactionManagementApplicationService {
 
     @Transactional
     public TransactionDTO transfer(String fromAccountNumber, String toAccountNumber, BigDecimal amount) {
-        Account fromAccount = Account.fromAccEntity(accountRepository.findByAccountNumber(fromAccountNumber)
-                .orElseThrow(() -> new AccountManagementException("Account with number " + fromAccountNumber + " does not exist")));
-        Account toAccount = Account.fromAccEntity(accountRepository.findByAccountNumber(toAccountNumber)
-                .orElseThrow(() -> new AccountManagementException("Account with number " + toAccountNumber + " does not exist")));
+        Account fromAccount = Account.fromAccountEntity(accountRepository.findByAccountNumber(fromAccountNumber)
+                .orElseThrow(() -> new AccountManagementException("TRANSFER_ERROR_SENDER_NOT_FOUND","Account with number " + fromAccountNumber + " does not exist")));
+        Account toAccount = Account.fromAccountEntity(accountRepository.findByAccountNumber(toAccountNumber)
+                .orElseThrow(() -> new AccountManagementException("TRANSFER_ERROR_RECEIVER_NOT_FOUND",("Account with number " + toAccountNumber + " does not exist"))));
 
         if (fromAccount.getBalance().compareTo(amount) < 0) {
-            throw new AccountManagementException("Insufficient Fund, can't proceed the transfer process");
+            throw new AccountManagementException("TRANSFER_ERROR_INSUFFICIENT_FUND", "Insufficient Fund, can't proceed the transfer process");
         }
 
         fromAccount.transfer(toAccount, amount);
-        AccountEntity fromAccountEntity = fromAccount.toAccEntity();
-        AccountEntity toAccountEntity = toAccount.toAccEntity();
+        AccountEntity fromAccountEntity = fromAccount.toAccountEntity();
+        AccountEntity toAccountEntity = toAccount.toAccountEntity();
         accountRepository.save(fromAccountEntity);
         accountRepository.save(toAccountEntity);
 

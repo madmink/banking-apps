@@ -1,9 +1,7 @@
 package com.banking.simplebankingapps.api;
 
 import com.banking.simplebankingapps.api.dto.CustomerDTO;
-import com.banking.simplebankingapps.modules.customermanagement.domain.repository.CustomerRepository;
 import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
-import com.banking.simplebankingapps.modules.customermanagement.infrastructure.entity.CustomerEntity;
 import com.banking.simplebankingapps.modules.customermanagement.service.CustomerManagementApplicationService;
 import com.banking.simplebankingapps.shared.IdentityCardType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,23 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -172,7 +163,7 @@ class CustomerApiTest {
 
         mockMvc.perform(delete("/api/customer/delete/{customerId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
 
