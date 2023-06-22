@@ -24,12 +24,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,9 +39,6 @@ class CustomerApiTest {
 
     @Mock
     private CustomerManagementApplicationService customerManagementApplicationService;
-
-    @Mock
-    private CustomerRepository customerRepository;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -99,28 +96,85 @@ class CustomerApiTest {
     }
 
     @Nested
-    class AllGetCustomerTest{
+    class AllGetCustomerTest {
         @Test
-        void testGetCustomerSuccessful(){
-            CustomerDTO expectedCustomer = new CustomerDTO();
-            expectedCustomer.setId(2L);
+        void testGetCustomerSuccessful() throws Exception {
 
-            when(customerManagementApplicationService.getCustomerById(expectedCustomer.getId())).thenReturn(expectedCustomer);
-            ResponseEntity<Object> responseEntity = customerApi.getCustomerById(expectedCustomer.getId());
+            when(customerManagementApplicationService.getCustomerById(customerDTO.getId())).thenReturn(customerDTO);
 
-            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-            assertEquals(expectedCustomer, responseEntity.getBody());
-            verify(customerManagementApplicationService).getCustomerById(expectedCustomer.getId());
+            mockMvc.perform(get("/api/customer/detail/{customerId}", customerDTO.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(customerDTO)))
+                    .andExpect(status().isOk());
 
         }
 
         @Test
-        void testGetCustomer_IdNotFound() throws Exception{
+        void testGetCustomer_IdNotFound() throws Exception {
             CustomerDTO expectedCustomer = new CustomerDTO();
             expectedCustomer.setId(2L);
 
+            String errorCode = "YOUR_BELOVED_ERROR_CODE";
+            String errorMessage = "Customer could not be created.";
+
+            when(customerManagementApplicationService.getCustomerById(expectedCustomer.getId())).thenThrow(new CustomerManagementException(errorCode, errorMessage));
+
+            mockMvc.perform(get("/api/customer/detail/{customerId}", 2L)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(customerDTO)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode", is(errorCode)))
+                    .andExpect(jsonPath("$.errorMessages[0]", is(errorMessage)));
 
 
         }
     }
+
+    @Nested
+    class AllUpdateCustomerTest {
+
+        @Test
+        void testUpdateCustomerSuccess() throws Exception {
+            CustomerDTO newDataUpdate = new CustomerDTO();
+            newDataUpdate.setFirstName("Put Ang In A");
+
+            when(customerManagementApplicationService.updateCustomer(any(CustomerDTO.class), anyLong())).thenReturn(newDataUpdate);
+
+            mockMvc.perform(put("/api/customer/update/{customerId}", 1L)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(newDataUpdate)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.firstName", is(newDataUpdate.getFirstName())));
+        }
+
+        @Test
+        void testUpdateCustomerFailure_CustomerIdNotFound() throws Exception {
+
+            String errorCode = "YOUR_BELOVED_ERROR_CODE";
+            String errorMessage = "Customer ID can not be found.";
+
+            when(customerManagementApplicationService.updateCustomer(any(CustomerDTO.class), anyLong())).thenThrow(new CustomerManagementException(errorCode, errorMessage));
+
+            mockMvc.perform(put("/api/customer/update/{customerId}", 1L)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(customerDTO)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errorCode", is(errorCode)))
+                    .andExpect(jsonPath("$.errorMessages[0]", is(errorMessage)));
+
+        }
+
+    }
+
+    @Test
+    void testDeleteCustomerSuccessful() throws Exception {
+        doNothing().when(customerManagementApplicationService).deleteCustomer(anyLong());
+
+        mockMvc.perform(delete("/api/customer/delete/{customerId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+
 }
+

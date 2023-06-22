@@ -52,7 +52,7 @@ public class CustomerApi {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> updateCustomer(@PathVariable("id") Long customerId,
-                                                 @Valid @RequestBody CustomerDTO customerDto) {
+                                                 @RequestBody CustomerDTO customerDto) {
         try {
             CustomerDTO updatedCustomerDto = customerService.updateCustomer(customerDto, customerId);
             return ResponseEntity.ok(updatedCustomerDto);
