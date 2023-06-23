@@ -2,6 +2,7 @@ package com.banking.simplebankingapps.modules.transactionmanagement.domain.model
 
 import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Account;
 import com.banking.simplebankingapps.modules.transactionmanagement.infrastructure.entity.TransactionEntity;
+import com.banking.simplebankingapps.shared.TransactionType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class Transaction {
     private Account account;
 
     public Transaction(Long id, LocalDate date, BigDecimal amount, String transactionType, Account account) {
+        this.id = id;
         this.date = date;
         this.amount = amount;
         this.transactionType = transactionType;
@@ -31,22 +33,21 @@ public class Transaction {
         transactionEntity.setId(this.id);
         transactionEntity.setDate(this.date);
         transactionEntity.setAmount(this.amount);
-        transactionEntity.setTransactionType(this.transactionType);
+        transactionEntity.setTransactionType(TransactionType.valueOf(this.transactionType));
         transactionEntity.setAccount(this.account.toAccountEntity());
         return transactionEntity;
     }
 
     public static Transaction fromEntity(TransactionEntity transactionEntity) {
+        String transactionType = transactionEntity.getTransactionType().toString();
+
         return new Transaction(
                 transactionEntity.getId(),
                 transactionEntity.getDate(),
                 transactionEntity.getAmount(),
-                transactionEntity.getTransactionType(),
-                Account.fromAccountEntity(transactionEntity.getAccount())  // Assuming you have a fromEntity method in Account
+                transactionType,
+                Account.fromAccountEntity(transactionEntity.getAccount()) // Assuming you have a fromEntity method in Account
         );
     }
 
-
-
-    // If there are any methods relating to the business rules and logic specific to a transaction, they can be placed here.
-}
+    }

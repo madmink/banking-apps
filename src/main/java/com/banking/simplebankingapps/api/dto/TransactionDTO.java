@@ -16,15 +16,15 @@ public class TransactionDTO {
     private LocalDate date;
     private BigDecimal amount;
     private String transactionType;
-    private String accountNumber; //assuming each transaction is related to an account
+    private Long accountId;
 
-    public static TransactionDTO fromDomain(Transaction transaction){
+    public static TransactionDTO fromDomain(Transaction transaction) {
         TransactionDTO transactionDTO = new TransactionDTO();
-        transactionDTO.setId(transaction.getId());
+        transactionDTO.setId(transaction.getId()); // Assign the transaction ID
         transactionDTO.setDate(transaction.getDate());
         transactionDTO.setAmount(transaction.getAmount());
         transactionDTO.setTransactionType(transaction.getTransactionType().toString());
-        transactionDTO.setAccountNumber(transaction.getAccount().getAccountNumber()); //assuming Transaction has a reference to Account
+        transactionDTO.setAccountId(transaction.getAccount().getId());
         return transactionDTO;
     }
 }

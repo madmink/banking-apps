@@ -13,6 +13,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -36,9 +37,6 @@ public class Account {
     }
 
     public void deposit(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Deposit amount must be non-negative");
-        }
         this.balance = this.balance.add(amount);
     }
 
@@ -77,7 +75,6 @@ public class Account {
     }
 
     public static Account fromAccountEntity(AccountEntity accountEntity) {
-        List<TransactionEntity> transactionEntities = accountEntity.getTransactions() == null ? Collections.emptyList() : accountEntity.getTransactions();
 
         return new Account(
                 accountEntity.getId(),
@@ -85,7 +82,8 @@ public class Account {
                 accountEntity.getBalance(),
                 Customer.fromCustomerEntity(accountEntity.getCustomer()),
                 accountEntity.getAccountType(),
-                transactionEntities.stream().map(Transaction::fromEntity).toList()
+                null
         );
     }
+
 }

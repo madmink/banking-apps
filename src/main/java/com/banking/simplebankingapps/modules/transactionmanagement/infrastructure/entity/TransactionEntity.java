@@ -1,6 +1,7 @@
 package com.banking.simplebankingapps.modules.transactionmanagement.infrastructure.entity;
 
 import com.banking.simplebankingapps.modules.accountmanagement.infrastructure.entity.AccountEntity;
+import com.banking.simplebankingapps.shared.TransactionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,20 +19,21 @@ public class TransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDate date;
     private BigDecimal amount;
-    private String transactionType;
+
+    @Enumerated(EnumType.STRING)  // Add this annotation to map the enum as a string
+    private TransactionType transactionType;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private AccountEntity account;
 
-    public TransactionEntity(LocalDate date, BigDecimal amount, String transactionType, AccountEntity account) {
+    public TransactionEntity(LocalDate date, BigDecimal amount, TransactionType transactionType, AccountEntity account) {
         this.date = date;
         this.amount = amount;
         this.transactionType = transactionType;
         this.account = account;
     }
-
-    // If there are any methods relating to the business rules and logic specific to a transaction, they can be placed here.
 }
