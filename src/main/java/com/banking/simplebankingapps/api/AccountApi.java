@@ -2,9 +2,8 @@ package com.banking.simplebankingapps.api;
 
 import com.banking.simplebankingapps.api.globalexceptionhandler.CustomErrorType;
 import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
-import com.banking.simplebankingapps.modules.accountmanagement.service.AccountManagementApplicationService;
-import com.banking.simplebankingapps.api.dto.AccountDTO;
-import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
+import com.banking.simplebankingapps.modules.accountmanagement.service.AccountManagementService;
+import com.banking.simplebankingapps.modules.accountmanagement.dto.AccountDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +17,10 @@ import java.util.List;
 @RequestMapping("/api/account")
 public class AccountApi {
 
-    private final AccountManagementApplicationService accountService;
+    private final AccountManagementService accountService;
 
     @Autowired
-    public AccountApi(AccountManagementApplicationService accountService) {
+    public AccountApi(AccountManagementService accountService) {
         this.accountService = accountService;
     }
 

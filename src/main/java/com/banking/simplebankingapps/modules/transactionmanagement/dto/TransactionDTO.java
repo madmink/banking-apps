@@ -1,4 +1,4 @@
-package com.banking.simplebankingapps.api.dto;
+package com.banking.simplebankingapps.modules.transactionmanagement.dto;
 
 import com.banking.simplebankingapps.modules.transactionmanagement.domain.model.Transaction;
 import lombok.Getter;

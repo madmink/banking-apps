@@ -1,10 +1,9 @@
 package com.banking.simplebankingapps.api;
 
-import com.banking.simplebankingapps.api.dto.AccountDTO;
+import com.banking.simplebankingapps.modules.accountmanagement.dto.AccountDTO;
 import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
-import com.banking.simplebankingapps.modules.accountmanagement.service.AccountManagementApplicationService;
+import com.banking.simplebankingapps.modules.accountmanagement.service.AccountManagementService;
 import com.banking.simplebankingapps.modules.customermanagement.domain.repository.CustomerRepository;
-import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
 import com.banking.simplebankingapps.shared.AccountType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -36,9 +34,7 @@ public class AccountApiTest {
     private AccountApi accountApi;
 
     @Mock
-    private AccountManagementApplicationService accountManagementApplicationService;
-    @Mock
-    private CustomerRepository customerRepository;
+    private AccountManagementService accountManagementApplicationService;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -74,16 +70,14 @@ public class AccountApiTest {
         void testCreateAccountFailed_CustomerDoesNotExist() throws Exception {
             when(accountManagementApplicationService.createAccount(any(AccountDTO.class))).thenThrow(new AccountManagementException("ACCOUNT_ERROR_CUSTOMER_DOES_NOT_EXIST", "Customer Does Not Exist"));
 
-            // Create the request body
             AccountDTO accountDTO = new AccountDTO();
 
             mockMvc.perform(post("/api/account/create")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(accountDTO)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(content().json("{\"errorCode\":\"ACCOUNT_ERROR_CUSTOMER_DOES_NOT_EXIST\",\"errorMessages\":[\"Customer Does Not Exist\"]}"));
+                    .andExpect(content().json("{\"errorCode\":\"ACCOUNT_ERROR_CUSTOMER_DOES_NOT_EXIST\",\"errorMessage\":[\"Customer Does Not Exist\"]}"));
 
-            // Add additional assertions based on the expected behavior
 
         }
 
@@ -99,16 +93,13 @@ public class AccountApiTest {
 
             when(accountManagementApplicationService.createAccount(any(AccountDTO.class))).thenReturn(createdAccountDTO);
 
-            // Create the request body
             AccountDTO accountDTO = new AccountDTO();
 
-            // Perform the request and verify the response
             mockMvc.perform(post("/api/account/create")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(accountDTO)))
                     .andExpect(status().isOk())
                     .andExpect(content().json(objectMapper.writeValueAsString(createdAccountDTO)));
-
 
         }
 
@@ -128,7 +119,7 @@ public class AccountApiTest {
                             .content(objectMapper.writeValueAsString(accountDTO)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode", Matchers.is(errorCode)))
-                    .andExpect(jsonPath("$.errorMessages[0]", Matchers.is(errorMessage)));
+                    .andExpect(jsonPath("$.errorMessage[0]", Matchers.is(errorMessage)));
 
         }
 
@@ -172,7 +163,7 @@ public class AccountApiTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode").value(errorCode))
-                    .andExpect(jsonPath("$.errorMessages[0]").value(errorMessage));
+                    .andExpect(jsonPath("$.errorMessage[0]").value(errorMessage));
 
             // Verify the service method was called
             verify(accountManagementApplicationService).getAccountByCustomerId(customerId);

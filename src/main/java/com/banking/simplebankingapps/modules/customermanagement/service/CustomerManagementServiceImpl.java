@@ -1,6 +1,6 @@
 package com.banking.simplebankingapps.modules.customermanagement.service;
 
-import com.banking.simplebankingapps.api.dto.CustomerDTO;
+import com.banking.simplebankingapps.modules.customermanagement.dto.CustomerDTO;
 import com.banking.simplebankingapps.modules.accountmanagement.infrastructure.entity.AccountEntity;
 import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
 import com.banking.simplebankingapps.modules.customermanagement.domain.repository.CustomerRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CustomerManagementApplicationService {
+public class CustomerManagementServiceImpl implements CustomerManagementService, AccountProvider {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -37,7 +37,7 @@ public class CustomerManagementApplicationService {
 
     public CustomerDTO getCustomerById(Long customerId) {
         CustomerEntity customerEntity = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerManagementException("CUSTOMER_ID_ERROR","Customer ID doesn't exist, please contact the Customer Service"));
+                .orElseThrow(() -> new CustomerManagementException("CUSTOMER_ID_DOES_NOT_EXIST","Customer ID doesn't exist, please contact the Customer Service"));
 
         Customer customer = Customer.fromCustomerEntity(customerEntity);
         return CustomerDTO.fromDomain(customer);
@@ -46,7 +46,7 @@ public class CustomerManagementApplicationService {
 
     public CustomerDTO updateCustomer(CustomerDTO customerDTO, Long customerId) {
         Optional<CustomerEntity> optionalCustomerEntity = customerRepository.findById(customerId);
-        if (!optionalCustomerEntity.isPresent()) {
+        if (optionalCustomerEntity.isEmpty()) {
             throw new CustomerManagementException("CUSTOMER_NOT_FOUND", "The requested customer was not found.");
         }
 
@@ -65,21 +65,19 @@ public class CustomerManagementApplicationService {
         Optional<CustomerEntity> optionalCustomerEntity = customerRepository.findById(customerId);
 
         CustomerEntity customerEntity = optionalCustomerEntity.orElseThrow(() ->
-                new CustomerManagementException("CUSTOMER_ID_ERROR", "Customer Not Found, please check the Customer Id"));
+                new CustomerManagementException("CUSTOMER_ID_NOT_FOUND_TO_DELETE", "Customer Not Found, please check the Customer Id"));
 
         List<AccountEntity> accounts = accountRepository.findAllByCustomerId(customerId);
 
         if (!accounts.isEmpty()) {
-            throw new CustomerManagementException("CUSTOMER_ID_ERROR", "Customer Still has active accounts. Please close the accounts first");
+            throw new CustomerManagementException("CUSTOMER_STILL_HAVE_UNRESOLVED_ACCOUNT", "Customer Still has active accounts. Please close the accounts first");
         }
         customerRepository.delete(customerEntity);
     }
 
 
-
-
-
-
-
-
+    @Override
+    public AccountProviderDTO provideAccountById(Long customerId) {
+        return null;
+    }
 }

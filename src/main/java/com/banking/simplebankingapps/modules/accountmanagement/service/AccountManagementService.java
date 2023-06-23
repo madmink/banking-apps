@@ -1,6 +1,6 @@
 package com.banking.simplebankingapps.modules.accountmanagement.service;
 
-import com.banking.simplebankingapps.api.dto.AccountDTO;
+import com.banking.simplebankingapps.modules.accountmanagement.dto.AccountDTO;
 import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Account;
 import com.banking.simplebankingapps.modules.accountmanagement.domain.repository.AccountRepository;
 import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
@@ -14,12 +14,12 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Service
-public class AccountManagementApplicationService {
+public class AccountManagementService implements AccountService{
 
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
     @Autowired
-    public AccountManagementApplicationService(CustomerRepository customerRepository, AccountRepository accountRepository) {
+    public AccountManagementService(CustomerRepository customerRepository, AccountRepository accountRepository) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
     }
@@ -54,6 +54,16 @@ public class AccountManagementApplicationService {
         return AccountDTO.fromAccountDomainToAccountDTO(account);
     }
 
+    public List<AccountDTO> getAccountByCustomerId(Long customerId) {
+        List<AccountEntity> accounts = accountRepository.findAllByCustomerId(customerId);
+        List<AccountDTO> accountList = new ArrayList<>();
+
+        for (AccountEntity account : accounts) {
+            AccountDTO dto = AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccountEntity(account));
+            accountList.add(dto);
+        }
+        return accountList;
+    }
 
     public void deleteAccount(String accountNumber) {
         Account account = Account.fromAccountEntity(accountRepository.findByAccountNumber(accountNumber)
@@ -65,15 +75,5 @@ public class AccountManagementApplicationService {
 
         accountRepository.delete(account.toAccountEntity());
     }
-
-    public List<AccountDTO> getAccountByCustomerId(Long customerId) {
-        List<AccountEntity> accounts = accountRepository.findAllByCustomerId(customerId);
-        List<AccountDTO> accountList = new ArrayList<>();
-
-        for (AccountEntity account : accounts) {
-            AccountDTO dto = AccountDTO.fromAccountDomainToAccountDTO(Account.fromAccountEntity(account));
-            accountList.add(dto);
-        }
-        return accountList;
-    }
 }
+

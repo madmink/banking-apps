@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.banking.simplebankingapps.modules.customermanagement.infrastructure.entity.CustomerEntity;
-import com.banking.simplebankingapps.api.dto.CustomerDTO;
 import com.banking.simplebankingapps.shared.IdentityCardType;
 
 @Getter
@@ -50,14 +49,5 @@ public class Customer {
         customer.setIdentityNumber(customerEntity.getIdentityNumber());
 
         return customer;
-    }
-    public void updateFromDto(CustomerDTO customerDto) {
-        this.firstName = customerDto.getFirstName();
-        this.lastName = customerDto.getLastName();
-        this.email = customerDto.getEmail();
-        this.address = customerDto.getAddress();
-        this.phoneNumber = customerDto.getPhoneNumber();
-        this.identityType = customerDto.getIdentityType();
-        this.identityNumber = customerDto.getIdentityNumber();
     }
 }

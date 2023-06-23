@@ -1,4 +1,4 @@
-package com.banking.simplebankingapps.api.dto;
+package com.banking.simplebankingapps.modules.accountmanagement.dto;
 
 import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Account;
 import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
@@ -38,5 +38,6 @@ public class AccountDTO {
         accountDTO.setBalance(account.getBalance());
         accountDTO.setCustomerId(account.getCustomer().getId());
         return accountDTO;
+
     }
 }

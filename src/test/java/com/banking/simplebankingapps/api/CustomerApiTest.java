@@ -1,8 +1,8 @@
 package com.banking.simplebankingapps.api;
 
-import com.banking.simplebankingapps.api.dto.CustomerDTO;
+import com.banking.simplebankingapps.modules.customermanagement.dto.CustomerDTO;
 import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
-import com.banking.simplebankingapps.modules.customermanagement.service.CustomerManagementApplicationService;
+import com.banking.simplebankingapps.modules.customermanagement.service.CustomerManagementServiceImpl;
 import com.banking.simplebankingapps.shared.IdentityCardType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ class CustomerApiTest {
     private CustomerApi customerApi;
 
     @Mock
-    private CustomerManagementApplicationService customerManagementApplicationService;
+    private CustomerManagementServiceImpl customerManagementApplicationService;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -80,7 +80,7 @@ class CustomerApiTest {
                             .content(objectMapper.writeValueAsString(customerDTO)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode", is(errorCode)))
-                    .andExpect(jsonPath("$.errorMessages[0]", is(errorMessage)));
+                    .andExpect(jsonPath("$.errorMessage[0]", is(errorMessage)));
         }
 
 
@@ -115,7 +115,7 @@ class CustomerApiTest {
                             .content(objectMapper.writeValueAsString(customerDTO)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode", is(errorCode)))
-                    .andExpect(jsonPath("$.errorMessages[0]", is(errorMessage)));
+                    .andExpect(jsonPath("$.errorMessage[0]", is(errorMessage)));
 
 
         }
@@ -151,7 +151,7 @@ class CustomerApiTest {
                             .content(objectMapper.writeValueAsString(customerDTO)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.errorCode", is(errorCode)))
-                    .andExpect(jsonPath("$.errorMessages[0]", is(errorMessage)));
+                    .andExpect(jsonPath("$.errorMessage[0]", is(errorMessage)));
 
         }
 

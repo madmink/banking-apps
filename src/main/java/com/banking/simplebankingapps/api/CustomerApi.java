@@ -1,9 +1,9 @@
 package com.banking.simplebankingapps.api;
 
-import com.banking.simplebankingapps.api.dto.CustomerDTO;
+import com.banking.simplebankingapps.modules.customermanagement.dto.CustomerDTO;
 import com.banking.simplebankingapps.api.globalexceptionhandler.CustomErrorType;
 import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
-import com.banking.simplebankingapps.modules.customermanagement.service.CustomerManagementApplicationService;
+import com.banking.simplebankingapps.modules.customermanagement.service.CustomerManagementServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,16 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerApi {
 
-    private final CustomerManagementApplicationService customerService;
+    private final CustomerManagementServiceImpl customerService;
 
     @Autowired
-    public CustomerApi(CustomerManagementApplicationService customerService) {
+    public CustomerApi(CustomerManagementServiceImpl customerService) {
         this.customerService = customerService;
     }
 

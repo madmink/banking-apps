@@ -1,4 +1,4 @@
-package com.banking.simplebankingapps.api.dto;
+package com.banking.simplebankingapps.modules.customermanagement.dto;
 
 import com.banking.simplebankingapps.modules.customermanagement.domain.model.Customer;
 import com.banking.simplebankingapps.shared.IdentityCardType;

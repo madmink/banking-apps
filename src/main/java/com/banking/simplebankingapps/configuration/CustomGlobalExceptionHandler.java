@@ -1,22 +1,22 @@
-package com.banking.simplebankingapps.api.globalexceptionhandler;
+package com.banking.simplebankingapps.configuration;
 
+import com.banking.simplebankingapps.api.globalexceptionhandler.CustomErrorType;
 import com.banking.simplebankingapps.modules.customermanagement.exception.CustomerManagementException;
 import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
 import com.banking.simplebankingapps.modules.transactionmanagement.exception.TransactionManagementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.validation.FieldError;
 import java.util.ArrayList;
 import java.util.List;
 
-@ControllerAdvice
+@RestController
 public class CustomGlobalExceptionHandler {
 
-    // Handle exceptions thrown by Customer Management
     @ExceptionHandler(CustomerManagementException.class)
     public final ResponseEntity<CustomErrorType> handleCustomerManagementException(CustomerManagementException ex, WebRequest request) {
         List<String> errorMessages = new ArrayList<>();
@@ -25,7 +25,6 @@ public class CustomGlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    // Handle exceptions thrown by Account Management
     @ExceptionHandler(AccountManagementException.class)
     public ResponseEntity<CustomErrorType> handleAccountManagementException(AccountManagementException ex) {
         List<String> errorMessages = new ArrayList<>();

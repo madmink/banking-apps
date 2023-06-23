@@ -1,9 +1,9 @@
 package com.banking.simplebankingapps.api;
 
-import com.banking.simplebankingapps.api.dto.TransactionDTO;
+import com.banking.simplebankingapps.modules.transactionmanagement.dto.TransactionDTO;
 import com.banking.simplebankingapps.api.globalexceptionhandler.CustomErrorType;
 import com.banking.simplebankingapps.modules.transactionmanagement.exception.TransactionManagementException;
-import com.banking.simplebankingapps.modules.transactionmanagement.service.TransactionManagementApplicationService;
+import com.banking.simplebankingapps.modules.transactionmanagement.service.TransactionManagementService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +16,9 @@ import java.util.List;
 @RequestMapping("api/transaction")
 public class TransactionApi {
 
-    private final TransactionManagementApplicationService transactionManagementApplicationService;
+    private final TransactionManagementService transactionManagementApplicationService;
 
-    public TransactionApi(TransactionManagementApplicationService transactionManagementApplicationService){
+    public TransactionApi(TransactionManagementService transactionManagementApplicationService){
         this.transactionManagementApplicationService = transactionManagementApplicationService;
     }
 

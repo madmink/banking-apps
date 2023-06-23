@@ -1,6 +1,6 @@
 package com.banking.simplebankingapps.modules.transactionmanagement.service;
 
-import com.banking.simplebankingapps.api.dto.TransactionDTO;
+import com.banking.simplebankingapps.modules.transactionmanagement.dto.TransactionDTO;
 import com.banking.simplebankingapps.modules.accountmanagement.domain.model.Account;
 import com.banking.simplebankingapps.modules.accountmanagement.domain.repository.AccountRepository;
 import com.banking.simplebankingapps.modules.accountmanagement.exception.AccountManagementException;
@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
-public class TransactionManagementApplicationService {
+public class TransactionManagementService implements TransactionService{
 
     @Autowired
     private TransactionRepository transactionRepository;
